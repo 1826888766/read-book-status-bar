@@ -5,7 +5,7 @@
 	"version": "0.0.4",
 	"publisher": "read-book",
 	"engines": {
-		"vscode": "^1.50.0"
+		"vscode": "^1.10.0"
 	},
 	"categories": [
 		"Other"
@@ -17,7 +17,6 @@
 		"onCommand:read-book-status-bar.pre",
 		"onCommand:read-book-status-bar.next",
 		"onCommand:read-book-status-bar.stop"
-
 	],
 	"contributes": {
 		"commands": [
@@ -59,9 +58,9 @@
 				},
 				"read-book-status-bar.type": {
 					"type": "string",
-					"enum": ["biquge"],
+					"enum": ["biquge","qidian"],
 					"default": "biquge",
-					"enumDescriptions": ["笔趣阁"]
+					"enumDescriptions": ["笔趣阁","起点中文网"]
 				},
 				"read-book-status-bar.speed": {
 					"type": "number",

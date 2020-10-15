@@ -206,8 +206,8 @@ export class Log {
     /**
      * 停止/开始
      */
-    public stop() {
-        this.isStop = !this.isStop;
+    public stop(type = false) {
+        this.isStop = type||!this.isStop;
         if (this.isStop) {
             this.playBar.text = "$(debug-pause)";
             clearTimeout(this.timeout);
@@ -287,7 +287,7 @@ export class Log {
      */
     public async search(name: string = "") {
         this.selectNav = false;
-        this.stop();
+        this.stop(true); // 强制停止
         this.quickPick.buttons = [
             {
                 tooltip: "上一页",
