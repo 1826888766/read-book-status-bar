@@ -69,6 +69,8 @@ export class Log {
                     this.read();
                 } else {
                     this.active = res[0];
+                    this.navIndex = 0;
+                    this.navPage.cur = 0;
                     this.navList = [];
                     this.list();
                 }
@@ -235,9 +237,14 @@ export class Log {
      */
     public showBookList() {
         this.quickPick.title = "选择书籍";
-        let start: number = this.bookPage.cur * this.navPage.limits;
-        let end: number = start + Number(this.bookPage.limits);
-        let items = this.bookList.slice(start, end);
+        let items = [];
+        if(this.bookList.length > 10){
+            let start: number = this.bookPage.cur * this.navPage.limits;
+            let end: number = start + Number(this.bookPage.limits);
+            items = this.bookList.slice(start, end);
+        }else{
+            items = this.bookList;
+        }
         this.quickPick.items = items.reduce((pre: any, cur: any) => {
             pre.push({
                 label: cur.title,
@@ -245,7 +252,9 @@ export class Log {
             });
             return pre;
         }, []);
-        this.quickPick.show();
+        setTimeout(()=>{
+            this.quickPick.show();
+        },150);
     }
     /**
      * 显示选择的书籍目录
@@ -308,8 +317,8 @@ export class Log {
         this.bookList = await request
             .setDirvers(this.config.type)
             .search(this.name);
-        this.showBookList();
         this.quickPick.busy = false;
+        this.showBookList();
     }
     /**
      * 获取目录

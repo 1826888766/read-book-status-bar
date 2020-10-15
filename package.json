@@ -2,10 +2,10 @@
 	"name": "read-book-status-bar",
 	"displayName": "read-book-status-bar",
 	"description": "状态栏读书",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"publisher": "read-book",
 	"engines": {
-		"vscode": "^1.10.0"
+		"vscode": "^1.50.0"
 	},
 	"categories": [
 		"Other"

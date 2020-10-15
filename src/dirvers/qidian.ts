@@ -9,49 +9,49 @@ class QiDian implements Dirvers {
   name: string = "";
 
   async list(item: any) {
-    const $ = await get(item.link).catch((err: any) => {
+    const $ = await get(item.link,'UTF-8').catch((err: any) => {
       console.log(err);
     });
     let list: any = [];
     // @ts-ignore
-    $("dd a").each(function (i, elem) {
+    $(".volume-wrap li a").each(function (i, elem) {
       list[i] = {
         // @ts-ignore
         title: $(this).text(),
         // @ts-ignore
-        link: item.link + $(this).attr("href"),
+        link: 'https:'+$(this).attr("href"),
       };
     });
     this._list = list;
+    console.log(list);
     return list;
   }
-
+  
   async read(item: any) {
-    const $ = await get(item.link).catch((err: any) => {
+    const $:any = await get(item.link,'UTF-8').catch((err: any) => {
       console.log(err);
     });
-    // @ts-ignore
-    return $("#content").text();
+    return $(".main-text-wrap .read-content").text();
   }
 
   async search(name: string) {
-    this.name = encodeURIComponent(name);
+    this.name =encodeURIComponent(name);
     let url =
       "https://www.qidian.com/search?kw=" +
       this.name;
-    const $:any = await get(url).catch((err: any) => {
+    const $:any = await get(url,'UTF-8').catch((err: any) => {
       console.log(err);
     });
     let list: any = [];
     // @ts-ignore
-    $('#result-list  ul li').each(function (i, elem) {
+    $('#result-list .book-img-text ul li').each(function (i, elem) {
       // @ts-ignore
-      console.log($(this).html());
+      
       list[i] = {
         // @ts-ignore
-        title: $(this).find(".s2").text(),
+        title: $(this).find("h4").text(),
         // @ts-ignore
-        link: $(this).find(".s2 a").attr("href"),
+        link:'https:'+ $(this).find("h4 a").attr("href")+'#Catalog',
       };
     });
     this.navlist = list;
