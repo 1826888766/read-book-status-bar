@@ -25,8 +25,27 @@ export function activate(context: vscode.ExtensionContext) {
       log.list();
     }
   );
+  
+  let pre = vscode.commands.registerCommand(
+    "read-book-status-bar.pre",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.prePage();
+    }
+  );
+  
+  let next = vscode.commands.registerCommand(
+    "read-book-status-bar.next",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.nextPage();
+    }
+  );
   context.subscriptions.push(search);
   context.subscriptions.push(list);
+  context.subscriptions.push(pre);
+  context.subscriptions.push(next);
+
 
   log.run();
 }

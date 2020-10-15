@@ -40,12 +40,24 @@ export class Log {
 
   constructor(config: WorkspaceConfiguration) {
     this.config = config;
-
-    this.statusBar = window.createStatusBarItem(StatusBarAlignment.Left);
-    this.statusBar.show();
     this.pageIndex = this.config.pageIndex || 0;
     this.navIndex = this.config.navIndex || 0;
     this.quickPick = window.createQuickPick();
+    let status = window.createStatusBarItem(StatusBarAlignment.Right);
+    status.command = "read-book-status-bar.next";
+    status.text = "下一章";
+    status.tooltip = "下一章";
+    status.show();
+    this.statusBar = window.createStatusBarItem(StatusBarAlignment.Right);
+    this.statusBar.text = "当前章";
+    this.statusBar.tooltip = "正在获取...";
+    this.statusBar.color = "red";
+    this.statusBar.show();
+    let per = window.createStatusBarItem(StatusBarAlignment.Right);
+    per.command = "read-book-status-bar.pre";
+    per.text = "上一章";
+    per.tooltip = "上一章";
+    per.show();
     this.quickPick.onDidChangeSelection((res: QuickPickItem[]) => {
       if (res[0]) {
         if (this.selectNav) {
@@ -101,7 +113,10 @@ export class Log {
     }
   }
 
-  private next() {
+ private next() {
+    console.log(this.navList.length);
+    console.log(parseInt((this.navList.length / this.navPage.limits).toString()));
+    console.log(this.navPage.cur);
     if (this.selectNav) {
       if (
         this.navPage.cur >=
@@ -124,8 +139,32 @@ export class Log {
       this.showBookList();
     }
   }
+
+  public prePage() {
+    if(this.navIndex == 0){
+      window.showWarningMessage("已是第一章");
+      return;
+    }
+    this.activeNav = this.navList[this.navIndex];
+
+    this.pageIndex = 0;
+    this.navIndex -=1;
+    this.read();
+  }
+
+ public nextPage() {
+   if(this.navIndex >= this.navList.length -1){
+    window.showWarningMessage("已是最后一章");
+    return;
+   }
+   this.activeNav = this.navList[this.navIndex];
+
+   this.pageIndex = 0;
+    this.navIndex -=1;
+    this.read();
+  }
   public write(msg: string) {
-    this.statusBar.text = msg;
+    window.setStatusBarMessage(msg,3000);
   }
 
   public dispose() {
@@ -187,6 +226,16 @@ export class Log {
 
   public async list() {
     this.name = this.active.label;
+    this.quickPick.buttons = [
+      {
+        tooltip: "上一页",
+        iconPath: new ThemeIcon("arrow-left"),
+      },
+      {
+        tooltip: "下一页",
+        iconPath: new ThemeIcon("arrow-right"),
+      },
+    ];
     this.updateConfig("name", this.active.label);
     this.updateConfig("link", this.active.detail);
     this.write("正在获取书籍目录信息");
@@ -218,9 +267,10 @@ export class Log {
       this.write("请搜索书籍");
       return;
     }
-    this.updateConfig("navIndex", this.navIndex);
+    this.statusBar.tooltip = this.activeNav.title;
 
-    this.write("正在获取" + this.activeNav.title + "内容");
+    this.selectNav = true;
+    this.updateConfig("navIndex", this.navIndex);
     let res = await request.setDirvers(this.config.type).read({
       link: this.navList[this.navIndex].link,
     });
@@ -246,26 +296,20 @@ export class Log {
         name: this.active.label,
       });
       this.activeNav = this.navList[this.config.navIndex];
+      
       this.read();
     } else {
       this.write("请搜索书籍");
     }
   }
 
-  private readNext() {
-    this.navIndex = this.config.navIndex + 1;
-    this.pageIndex = 0;
-    this.activeNav = this.navList[this.navIndex];
-    this.updateConfig("navIndex", Number(this.navIndex));
-    this.read();
-  }
 
   private inteval() {
     let text = this.getContext();
-    clearTimeout(this.timeout)
+    clearTimeout(this.timeout);
     this.pageIndex++;
     if (text === undefined) {
-      this.readNext();
+      this.nextPage();
       return;
     }
     text = text.trim();

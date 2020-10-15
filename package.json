@@ -13,7 +13,9 @@
 	"activationEvents": [
 		"onStartupFinished",
 		"onCommand:read-book-status-bar.searchBook",
-		"onCommand:read-book-status-bar.navList"
+		"onCommand:read-book-status-bar.navList",
+		"onCommand:read-book-status-bar.pre",
+		"onCommand:read-book-status-bar.next"
 
 	],
 	"contributes": {
@@ -24,6 +26,12 @@
 			},{
 				"command": "read-book-status-bar.navList",
 				"title": "状态栏读书：目录"
+			},{
+				"command": "read-book-status-bar.pre",
+				"title": "状态栏读书：上一章"
+			},{
+				"command": "read-book-status-bar.next",
+				"title": "状态栏读书：下一章"
 			}
 		],
 		"configuration": {
