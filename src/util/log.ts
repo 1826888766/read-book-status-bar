@@ -21,6 +21,7 @@ export class Log {
   private navIndex = 0;
   private pageIndex = 0;
   private bookList = [];
+  private timeout:any = 0;
   private selectNav: boolean = false;
   private quickPick: QuickPick<QuickPickItem>;
   private navPage = {
@@ -261,6 +262,7 @@ export class Log {
 
   private inteval() {
     let text = this.getContext();
+    clearTimeout(this.timeout)
     this.pageIndex++;
     if (text === undefined) {
       this.readNext();
@@ -276,7 +278,7 @@ export class Log {
       speed = speed / 2;
     }
     this.write(text);
-    setTimeout(() => {
+    this.timeout = setTimeout(() => {
       this.inteval();
     }, speed);
   }
