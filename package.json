@@ -1,8 +1,8 @@
 {
 	"name": "read-book-status-bar",
 	"displayName": "read-book-status-bar",
-	"description": "",
-	"version": "0.0.2",
+	"description": "状态栏读书",
+	"version": "0.0.4",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -12,19 +12,20 @@
 	],
 	"activationEvents": [
 		"onStartupFinished",
-		"onCommand:read-book-status-bar.searchBook",
-		"onCommand:read-book-status-bar.navList",
+		"onCommand:read-book-status-bar.search",
+		"onCommand:read-book-status-bar.list",
 		"onCommand:read-book-status-bar.pre",
-		"onCommand:read-book-status-bar.next"
+		"onCommand:read-book-status-bar.next",
+		"onCommand:read-book-status-bar.stop"
 
 	],
 	"contributes": {
 		"commands": [
 			{
-				"command": "read-book-status-bar.searchBook",
+				"command": "read-book-status-bar.search",
 				"title": "状态栏读书：搜索"
 			},{
-				"command": "read-book-status-bar.navList",
+				"command": "read-book-status-bar.list",
 				"title": "状态栏读书：目录"
 			},{
 				"command": "read-book-status-bar.pre",
@@ -32,6 +33,9 @@
 			},{
 				"command": "read-book-status-bar.next",
 				"title": "状态栏读书：下一章"
+			},{
+				"command": "read-book-status-bar.stop",
+				"title": "状态栏读书：停止"
 			}
 		],
 		"configuration": {

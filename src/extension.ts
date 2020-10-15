@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(log);
 
   let search = vscode.commands.registerCommand(
-    "read-book-status-bar.searchBook",
+    "read-book-status-bar.search",
     () => {
       // The code you place here will be executed every time your command is executed
       log.search("列表");
@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   let list = vscode.commands.registerCommand(
-    "read-book-status-bar.navList",
+    "read-book-status-bar.list",
     () => {
       // The code you place here will be executed every time your command is executed
       log.list();
@@ -41,10 +41,27 @@ export function activate(context: vscode.ExtensionContext) {
       log.nextPage();
     }
   );
+  let stop = vscode.commands.registerCommand(
+    "read-book-status-bar.stop",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.stop();
+    }
+  );
+  let start = vscode.commands.registerCommand(
+    "read-book-status-bar.start",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.stop();
+    }
+  );
   context.subscriptions.push(search);
   context.subscriptions.push(list);
   context.subscriptions.push(pre);
   context.subscriptions.push(next);
+  context.subscriptions.push(stop);
+  context.subscriptions.push(start);
+
 
 
   log.run();
