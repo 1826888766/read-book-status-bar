@@ -3,6 +3,7 @@
 	"displayName": "read-book-status-bar",
 	"description": "",
 	"version": "0.0.1",
+	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -11,24 +12,38 @@
 	],
 	"activationEvents": [
 		"onStartupFinished",
-		"onCommand:read-book-status-bar.searchBook"
+		"onCommand:read-book-status-bar.searchBook",
+		"onCommand:read-book-status-bar.navList"
 
 	],
 	"contributes": {
 		"commands": [
 			{
 				"command": "read-book-status-bar.searchBook",
-				"title": "搜索书籍"
+				"title": "状态栏读书：搜索"
+			},{
+				"command": "read-book-status-bar.navList",
+				"title": "状态栏读书：目录"
 			}
 		],
 		"configuration": {
 			"type": "object",
 			"title": "状态栏读书",
 			"properties": {
-				"read-book-status-bar.index": {
+				"read-book-status-bar.autoRead": {
+					"type": "boolean",
+					"default": false,
+					"description": "启动时自动阅读上次记录"
+				},
+				"read-book-status-bar.navIndex": {
 					"type": "number",
 					"default": 0,
 					"description": "阅读到第几章"
+				},
+				"read-book-status-bar.pageIndex": {
+					"type": "number",
+					"default": 0,
+					"description": "阅读到第几行"
 				},
 				"read-book-status-bar.type": {
 					"type": "string",
@@ -44,7 +59,12 @@
 				"read-book-status-bar.name": {
 					"type": "string",
 					"default": "",
-					"description": "启动时默认搜索书籍名称"
+					"description": "当前阅读书籍名称"
+				},
+				"read-book-status-bar.link": {
+					"type": "string",
+					"default": "",
+					"description": "当前阅读书籍url"
 				}
 			}
 		}

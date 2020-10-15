@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/naming-convention
 var GBKTable = new Array(65510);
 GBKTable[0x0000]="00";
 GBKTable[0x0001]="01";
@@ -24068,4 +24069,4 @@ GBKTable[0xFFE3]="A3FE";
 GBKTable[0xFFE4]="A957";
 GBKTable[0xFFE5]="A3A4";
 
-export default GBKTable
+export default GBKTable;

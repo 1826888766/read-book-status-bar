@@ -1,7 +1,8 @@
+/* eslint-disable eqeqeq */
 /*  GBKUrl.js , version 0.0.1
  *  (c) 2011 meichua.com
  */
-import GBKTable from "./font"
+import GBKTable from "./font";
 class WxApi  {
 
 	encodeURI(str:any) {
@@ -26,7 +27,6 @@ class WxApi  {
     }
     
 	encodeURIComponent(str:any) {
-		console.log("进来了",str);
 		if(str != null) {
 			var result = "";
 			for(var i=0;i<str.length;i++) {
