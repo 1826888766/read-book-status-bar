@@ -1,5 +1,6 @@
 /* eslint-disable eqeqeq */
-import { start } from "repl";
+const path = require("path");
+const fs = require("fs");
 import { setTimeout } from "timers";
 import {
     window,
@@ -239,6 +240,9 @@ export class Log {
      */
     public dispose() {
         this.statusBar.dispose();
+        this.quickPick.dispose();
+        this.log.dispose();
+        
     }
     /**
      * 显示搜索道德书籍列表
@@ -378,6 +382,7 @@ export class Log {
             console.log("更新配置失败");
         }
     }
+
     /**
      * 读取章节内容
      */
