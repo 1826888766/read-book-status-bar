@@ -46,16 +46,24 @@ export class Log {
      * @param config 初始化
      */
     constructor(config: WorkspaceConfiguration) {
-        this.config = config;
+        this.setConfig(config);
+        this.initStatusBar();
+        this.initQuickPick();
         this.pageIndex = this.config.pageIndex || 0;
         this.navIndex = this.config.navIndex || 0;
         this.navPage.cur = parseInt((this.config.navIndex / this.navPage.limits).toString());
-        console.log(config);
-        console.log(this.navPage);
-
-        this.initStatusBar();
-        this.initQuickPick();
     }
+    /**
+     * 设置配置文件
+     * @param config 
+     */
+    public setConfig(config:WorkspaceConfiguration){
+        if(!this.config || this.config.type !== config.type){
+            this.config = config;
+            console.log(config);
+        }
+    }
+
     /**
      * 初始化下拉选择框
      */
@@ -342,6 +350,7 @@ export class Log {
         this.selectNav = true;
         if (this.navList.length > 0) {
             this.showNavList();
+            this.quickPick.busy = false;
             return;
         }
         this.navList = await request.setDirvers(this.config.type).list({

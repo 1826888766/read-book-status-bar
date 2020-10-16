@@ -58,9 +58,9 @@
 				},
 				"read-book-status-bar.type": {
 					"type": "string",
-					"enum": ["biquge","qidian"],
+					"enum": ["biquge","qidian","zongheng"],
 					"default": "biquge",
-					"enumDescriptions": ["笔趣阁","起点中文网"]
+					"enumDescriptions": ["笔趣阁","起点中文网","纵横中文网"]
 				},
 				"read-book-status-bar.speed": {
 					"type": "number",

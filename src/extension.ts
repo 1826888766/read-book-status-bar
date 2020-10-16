@@ -10,6 +10,10 @@ export function activate(context: vscode.ExtensionContext) {
   let log = new Log(config);
   context.subscriptions.push(log);
 
+  vscode.workspace.onDidChangeConfiguration((e:any)=>{
+    log.setConfig(vscode.workspace.getConfiguration("read-book-status-bar"));
+  });
+
   let search = vscode.commands.registerCommand(
     "read-book-status-bar.search",
     () => {

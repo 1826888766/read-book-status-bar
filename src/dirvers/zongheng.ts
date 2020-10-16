@@ -1,7 +1,7 @@
 import { Dirvers } from "../interface/dirvers";
 import { get } from "../http";
 var iconv = require("iconv-lite");
-class QiDian implements Dirvers {
+class ZongHeng implements Dirvers {
   _list: any;
   navlist: any;
   name: string = "";
@@ -12,12 +12,12 @@ class QiDian implements Dirvers {
     });
     let list: any = [];
     // @ts-ignore
-    $(".volume-wrap li a").each(function (i, elem) {
+    $(".chapter-list li").each(function (i, elem) {
       list[i] = {
         // @ts-ignore
         title: $(this).text(),
         // @ts-ignore
-        link: 'https:'+$(this).attr("href"),
+        link: $(this).find('a').attr("href"),
       };
     });
     this._list = list;
@@ -29,31 +29,31 @@ class QiDian implements Dirvers {
     const $:any = await get(item.link,'UTF-8').catch((err: any) => {
       console.log(err);
     });
-    return $(".main-text-wrap .read-content").text();
+    return $(".content").text();
   }
 
   async search(name: string) {
     this.name =encodeURIComponent(name);
     let url =
-      "https://www.qidian.com/search?kw=" +
+      "https://search.zongheng.com/s?keyword=" +
       this.name;
     const $:any = await get(url,'UTF-8').catch((err: any) => {
       console.log(err);
     });
     let list: any = [];
     // @ts-ignore
-    $('#result-list .book-img-text ul li').each(function (i, elem) {
+    $('.search-tab .search-result-list').each(function (i, elem) {
       // @ts-ignore
-      
       list[i] = {
         // @ts-ignore
-        title: $(this).find("h4").text(),
+        title: $(this).find("h2").text(),
         // @ts-ignore
-        link:'https:'+ $(this).find("h4 a").attr("href")+'#Catalog',
+        link:$(this).find("h2 a").attr("href").replace("/book/",'/showchapter/'),
       };
     });
     this.navlist = list;
+    console.log(list);
     return list;
   }
 }
-export default new QiDian();
+export default new ZongHeng();

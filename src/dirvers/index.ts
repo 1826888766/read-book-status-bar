@@ -1,5 +1,7 @@
 import biquge from "./biquge";
 import qidian from "./qidian";
+import zongheng from "./zongheng";
+
 
 import { Dirvers } from "../interface/dirvers";
 interface StringArray {
@@ -7,6 +9,7 @@ interface StringArray {
   }
 let json:StringArray = {
     'biquge':biquge,
-    'qidian':qidian
+    'qidian':qidian,
+    'zongheng':zongheng
 };
 export default json;

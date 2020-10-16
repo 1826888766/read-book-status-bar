@@ -1,7 +1,6 @@
 import { Dirvers } from "../interface/dirvers";
 import { get } from "../http";
 import gbk from "../util/GBK";
-import { Log } from "../util/log";
 var iconv = require("iconv-lite");
 class BiQuGe implements Dirvers {
   _list: any;
