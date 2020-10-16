@@ -1,8 +1,8 @@
 {
 	"name": "read-book-status-bar",
 	"displayName": "read-book-status-bar",
-	"description": "状态栏读书",
-	"version": "0.0.8",
+	"description": "状态栏读书,浑水摸鱼",
+	"version": "0.0.9",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
