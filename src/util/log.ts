@@ -413,7 +413,8 @@ export class Log {
      * 初始运行
      */
     public async run() {
-        if (this.config.name && this.config.autoRead) {
+        this.isStop = !this.config.autoRead;
+        if (this.config.name) {
             this.name = this.config.name;
 
             this.active = {

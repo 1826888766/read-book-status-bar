@@ -10,7 +10,6 @@ export function activate(context: vscode.ExtensionContext) {
   let config = vscode.workspace.getConfiguration("read-book-status-bar");
   let log = new Log(config);
   context.subscriptions.push(log);
-  let bookshelf  = new BookShelf(config);
   vscode.workspace.onDidChangeConfiguration((e:any)=>{
     log.setConfig(vscode.workspace.getConfiguration("read-book-status-bar"));
   });
