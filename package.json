@@ -1,7 +1,9 @@
 {
 	"name": "read-book-status-bar",
-	"displayName": "read-book-status-bar",
+	"displayName": "状态栏读书",
 	"description": "状态栏读书,浑水摸鱼",
+	"keywords": ["read", "book", "阅读", "小说"],
+	"icon": "https://github.com/1826888766/read-book-status-bar/blob/mian/logo.png",
 	"version": "0.0.10",
 	"publisher": "read-book",
 	"engines": {
@@ -123,5 +125,13 @@
 		"axios": "^0.20.0",
 		"cheerio": "^1.0.0-rc.3",
 		"iconv-lite": "^0.6.2"
-	}
+	},
+    "bugs": {
+        "url": "https://github.com/1826888766/read-book-status-bar/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/1826888766/read-book-status-bar"
+    },
+    "homepage": "https://github.com/1826888766/read-book-status-bar/blob/mian/README.md"
 }
