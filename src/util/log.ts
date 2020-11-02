@@ -58,8 +58,8 @@ export class Log {
      * 设置配置文件
      * @param config 
      */
-    public setConfig(config:WorkspaceConfiguration){
-        if(!this.config || this.config.type !== config.type){
+    public setConfig(config: WorkspaceConfiguration) {
+        if (!this.config || this.config.type !== config.type) {
             this.config = config;
             console.log(config);
         }
@@ -218,7 +218,7 @@ export class Log {
      * 停止/开始
      */
     public stop(type = false) {
-        this.isStop = type||!this.isStop;
+        this.isStop = type || !this.isStop;
         if (this.isStop) {
             this.playBar.text = "$(debug-pause)";
             clearTimeout(this.timeout);
@@ -242,7 +242,7 @@ export class Log {
         this.statusBar.dispose();
         this.quickPick.dispose();
         this.log.dispose();
-        
+
     }
     /**
      * 显示搜索道德书籍列表
@@ -250,11 +250,11 @@ export class Log {
     public showBookList() {
         this.quickPick.title = "选择书籍";
         let items = [];
-        if(this.bookList.length > 10){
+        if (this.bookList.length > 10) {
             let start: number = this.bookPage.cur * this.navPage.limits;
             let end: number = start + Number(this.bookPage.limits);
             items = this.bookList.slice(start, end);
-        }else{
+        } else {
             items = this.bookList;
         }
         this.quickPick.items = items.reduce((pre: any, cur: any) => {
@@ -264,9 +264,9 @@ export class Log {
             });
             return pre;
         }, []);
-        setTimeout(()=>{
+        setTimeout(() => {
             this.quickPick.show();
-        },150);
+        }, 150);
     }
     /**
      * 显示选择的书籍目录
@@ -284,22 +284,22 @@ export class Log {
             });
             return pre;
         }, []);
-        if(this.activeNav){
+        if (this.activeNav) {
             this.quickPick.selectedItems = [
                 {
-                    label:this.activeNav.title,
-                    detail:this.activeNav.link
+                    label: this.activeNav.title,
+                    detail: this.activeNav.link
                 }
             ];
             this.quickPick.activeItems = [
                 {
-                    label:this.activeNav.title,
-                    detail:this.activeNav.link
+                    label: this.activeNav.title,
+                    detail: this.activeNav.link
                 }
             ];
-    
+
         }
-       
+
         this.quickPick.show();
     }
     /**
@@ -399,8 +399,7 @@ export class Log {
         let res = await request.setDirvers(this.config.type).read({
             link: this.navList[this.navIndex].link,
         });
-        res = res.replace(/。|\./g, "\n");
-        this.contextArr = res.split(/[(\r\n)\r\n]+/);
+        this.contextArr = res.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
         this.inteval();
     }
     /**
@@ -435,8 +434,8 @@ export class Log {
     /**
      * 间隔执行输出
      */
-    private inteval() {
-        let text = this.getContext();
+    private inteval(text = "") {
+        text = text || this.getContext();
         clearTimeout(this.timeout);
         this.pageIndex++;
         if (text === undefined) {
@@ -448,10 +447,24 @@ export class Log {
             this.inteval();
             return;
         }
+
         let speed = this.config.speed;
         if (text.length < 20) {
             speed = speed / 2;
         }
+
+        if (text.length > this.config.rowLength) {
+            this.write(text.substring(0, this.config.rowLength));
+            if (this.isStop) {
+                return;
+            }
+            let nextText = text.substring(this.config.rowLength);
+            this.timeout = setTimeout(() => {
+                this.inteval(nextText);
+            }, speed);
+            return;
+        }
+
         this.write(text);
         if (this.isStop) {
             return;

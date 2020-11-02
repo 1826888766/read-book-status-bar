@@ -76,6 +76,11 @@
 					"type": "string",
 					"default": "",
 					"description": "当前阅读书籍url"
+				},
+				"read-book-status-bar.rowLength": {
+					"type": "number",
+					"default": 40,
+					"description": "每行最多显示字数默认40，必须大于20,否则阅读时间会自动减半"
 				}
 			}
 		}
