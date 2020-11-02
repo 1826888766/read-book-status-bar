@@ -8,7 +8,7 @@
 		"阅读",
 		"小说"
 	],
-	"icon": "https://github.com/1826888766/read-book-status-bar/blob/mian/logo.png",
+	"icon": "logo.png",
 	"version": "0.0.11",
 	"publisher": "read-book",
 	"engines": {
