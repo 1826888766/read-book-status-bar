@@ -9,7 +9,7 @@
 		"小说"
 	],
 	"icon": "logo.png",
-	"version": "0.0.11",
+	"version": "0.0.12",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
