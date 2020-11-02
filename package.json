@@ -141,7 +141,7 @@
 	},
 	"homepage": "https://github.com/1826888766/read-book-status-bar/blob/mian/README.md",
 	"galleryBanner": {
-		"color": "black",
-		"theme": "light"
+		"color": "#333333",
+		"theme": "dark"
 	}
 }
