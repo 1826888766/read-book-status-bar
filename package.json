@@ -79,7 +79,8 @@
 						"笔趣阁",
 						"起点中文网",
 						"纵横中文网"
-					]
+					],
+					"description": "阅读平台"
 				},
 				"read-book-status-bar.speed": {
 					"type": "number",
