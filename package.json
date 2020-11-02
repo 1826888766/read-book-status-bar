@@ -2,7 +2,7 @@
 	"name": "read-book-status-bar",
 	"displayName": "read-book-status-bar",
 	"description": "状态栏读书,浑水摸鱼",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -23,16 +23,20 @@
 			{
 				"command": "read-book-status-bar.search",
 				"title": "状态栏读书：搜索"
-			},{
+			},
+			{
 				"command": "read-book-status-bar.list",
 				"title": "状态栏读书：目录"
-			},{
+			},
+			{
 				"command": "read-book-status-bar.pre",
 				"title": "状态栏读书：上一章"
-			},{
+			},
+			{
 				"command": "read-book-status-bar.next",
 				"title": "状态栏读书：下一章"
-			},{
+			},
+			{
 				"command": "read-book-status-bar.stop",
 				"title": "状态栏读书：停止"
 			}
@@ -58,9 +62,17 @@
 				},
 				"read-book-status-bar.type": {
 					"type": "string",
-					"enum": ["biquge","qidian","zongheng"],
+					"enum": [
+						"biquge",
+						"qidian",
+						"zongheng"
+					],
 					"default": "biquge",
-					"enumDescriptions": ["笔趣阁","起点中文网","纵横中文网"]
+					"enumDescriptions": [
+						"笔趣阁",
+						"起点中文网",
+						"纵横中文网"
+					]
 				},
 				"read-book-status-bar.speed": {
 					"type": "number",
