@@ -220,10 +220,12 @@ export class Log {
     public stop(type = false) {
         this.isStop = type || !this.isStop;
         if (this.isStop) {
-            this.playBar.text = "$(debug-pause)";
+            this.playBar.text = "$(debug-start)";
+            this.playBar.tooltip = "开始";
             clearTimeout(this.timeout);
         } else {
-            this.playBar.text = "$(debug-start)";
+            this.playBar.text = "$(debug-pause)";
+            this.playBar.tooltip = "停止";
             this.inteval();
         }
     }
@@ -386,12 +388,14 @@ export class Log {
     /**
      * 读取章节内容
      */
-    public async read() {
+    public async read(isInit = false) {
         if (!this.activeNav) {
             this.write("请搜索书籍");
             return;
         }
-        this.isStop = false;
+        if(!isInit){
+            this.isStop = false;
+        }
         this.statusBar.tooltip = this.activeNav.title;
 
         this.selectNav = true;
@@ -425,8 +429,16 @@ export class Log {
                 name: this.active.label,
             });
             this.activeNav = this.navList[this.config.navIndex];
-
-            this.read();
+            if (this.isStop) {
+                this.playBar.text = "$(debug-start)";
+                this.playBar.tooltip = "开始";
+            } else {
+                this.playBar.text = "$(debug-pause)";
+                this.playBar.tooltip = "停止";
+            }
+            if(this.config.autoRead){
+                this.read(true);
+            }
         } else {
             this.write("请搜索书籍");
         }

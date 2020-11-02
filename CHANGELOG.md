@@ -1,9 +1,3 @@
-# Change Log
+# 0.0.12
 
-All notable changes to the "read-book-status-bar" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+## 优化长句子显示不全问题
