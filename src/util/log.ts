@@ -59,9 +59,25 @@ export class Log {
      * @param config 
      */
     public setConfig(config: WorkspaceConfiguration) {
-        if (!this.config || this.config.type !== config.type) {
+        if (this.config&&this.config.type !== config.type) {
+        this.config = config;
+          
+          this.bookList = [];
+          this.navList = [];
+          this.navIndex = 0;
+          this.navPage = {
+            cur: 0,
+            limits: 10,
+          };
+          this.bookPage = {
+            cur: 0,
+            limits: 10,
+            };
+        this.search(this.config.name);
+
+        }else{
             this.config = config;
-            console.log(config);
+
         }
     }
 
