@@ -19,3 +19,11 @@
 - [x] 平台切换
 - [x] 阅读速度
 - [x] 阅读历史
+- [x] 上一行
+- [x] 下一行
+
+## 快捷键
+
+> 上一行  windows `ctrl+alt+w` mac `cmd+alt+w`
+>
+> 下一行  windows `ctrl+alt+s` mac `cmd+alt+s`

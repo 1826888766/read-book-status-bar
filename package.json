@@ -9,7 +9,7 @@
 		"小说"
 	],
 	"icon": "logo.png",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -23,9 +23,22 @@
 		"onCommand:read-book-status-bar.list",
 		"onCommand:read-book-status-bar.pre",
 		"onCommand:read-book-status-bar.next",
+		"onCommand:read-book-status-bar.up",
+		"onCommand:read-book-status-bar.down",
 		"onCommand:read-book-status-bar.stop"
 	],
 	"contributes": {
+		"keybindings": [{
+			"command": "read-book-status-bar.up",
+			"key": "ctrl+alt+w",
+			"mac": "cmd+alt+w",
+			"when": "isLinux || isWindows || isMac"
+		},{
+			"command": "read-book-status-bar.down",
+			"key": "ctrl+alt+s",
+			"mac": "cmd+alt+s",
+			"when": "isLinux || isWindows || isMac"
+		}],
 		"commands": [
 			{
 				"command": "read-book-status-bar.search",
@@ -44,6 +57,14 @@
 				"title": "状态栏读书：下一章"
 			},
 			{
+				"command": "read-book-status-bar.up",
+				"title": "状态栏读书：上一行"
+			},
+			{
+				"command": "read-book-status-bar.down",
+				"title": "状态栏读书：下一行"
+			},
+			{
 				"command": "read-book-status-bar.stop",
 				"title": "状态栏读书：停止"
 			}
@@ -56,6 +77,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "启动时自动阅读上次记录"
+				},
+				"read-book-status-bar.autoReadRow": {
+					"type": "boolean",
+					"default": true,
+					"description": "是否自动阅读下一行"
 				},
 				"read-book-status-bar.navIndex": {
 					"type": "number",

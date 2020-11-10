@@ -59,6 +59,20 @@ export function activate(context: vscode.ExtensionContext) {
       log.stop();
     }
   );
+  let up = vscode.commands.registerCommand(
+    "read-book-status-bar.up",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.up();
+    }
+  );
+  let down = vscode.commands.registerCommand(
+    "read-book-status-bar.down",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.down();
+    }
+  );
   context.subscriptions.push(search);
   context.subscriptions.push(list);
   context.subscriptions.push(pre);

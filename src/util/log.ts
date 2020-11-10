@@ -11,6 +11,7 @@ import {
     ConfigurationTarget,
     ThemeIcon,
     QuickInputButton,
+
     WorkspaceConfiguration,
 } from "vscode";
 import request from "./request";
@@ -25,6 +26,7 @@ export class Log {
     private timeout: any = 0;
     private selectNav: boolean = false;
     private isStop: boolean = false;
+    private pretext:string = ""; 
 
     private quickPick!: QuickPick<QuickPickItem>;
     private navPage = {
@@ -242,8 +244,13 @@ export class Log {
         } else {
             this.playBar.text = "$(debug-pause)";
             this.playBar.tooltip = "停止";
-            this.inteval();
+            if(!this.getContext()){
+                this.read();
+            }else{
+                this.inteval();
+            }
         }
+
     }
     // 输出文本
     public write(msg: string) {
@@ -460,19 +467,53 @@ export class Log {
         }
     }
     /**
+     * 下一行
+     */
+    public down(){
+        let auto = this.config.autoReadRow
+        if(!auto && !this.pretext){
+                this.pageIndex++;
+        }
+        if(this.pretext){
+            this.inteval(this.pretext);
+            this.pretext = ""
+        }else{
+            this.inteval();
+        }
+        
+    }
+    /**
+     * 上一行
+     */
+    public up(){
+        let auto = this.config.autoReadRow
+        if(auto){
+            this.pageIndex-=2;
+        }else{
+            this.pageIndex--;
+        }
+        this.inteval();
+    }
+    /**
      * 间隔执行输出
      */
     private inteval(text = "") {
         text = text || this.getContext();
-        clearTimeout(this.timeout);
-        this.pageIndex++;
-        if (text === undefined) {
+        let auto = this.config.autoReadRow
+        if(auto){
+            clearTimeout(this.timeout);
+            this.pageIndex++;
+        }
+        if(!auto&&text === undefined){
+            window.showErrorMessage("无章节内容，请先点击开始、或下一章");
+            return false;
+        }else if(auto&&text === undefined){
             this.nextPage();
             return;
         }
         text = text.trim();
         if (!text) {
-            this.inteval();
+            this.down();
             return;
         }
 
@@ -487,9 +528,14 @@ export class Log {
                 return;
             }
             let nextText = text.substring(this.config.rowLength);
-            this.timeout = setTimeout(() => {
-                this.inteval(nextText);
-            }, speed);
+            if(auto){
+                this.timeout = setTimeout(() => {
+                    this.inteval(nextText);
+                }, speed);
+            }else{
+                this.pretext = nextText;
+            }
+            
             return;
         }
 
@@ -497,8 +543,11 @@ export class Log {
         if (this.isStop) {
             return;
         }
-        this.timeout = setTimeout(() => {
-            this.inteval();
-        }, speed);
+        if(auto){
+            this.timeout = setTimeout(() => {
+                this.inteval();
+            }, speed);
+        }
+        
     }
 }
