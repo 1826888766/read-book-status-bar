@@ -472,7 +472,7 @@ export class Log {
     public down(){
         let auto = this.config.autoReadRow
         if(!auto && !this.pretext){
-                this.pageIndex++;
+            this.pageIndex++;
         }
         if(this.pretext){
             this.inteval(this.pretext);
@@ -511,7 +511,7 @@ export class Log {
             this.nextPage();
             return;
         }
-        text = text.trim();
+        text = text.replace(/[\n]/g,'').trim();
         if (!text) {
             this.down();
             return;
@@ -528,18 +528,18 @@ export class Log {
                 return;
             }
             let nextText = text.substring(this.config.rowLength);
+            this.pretext = nextText;
             if(auto){
                 this.timeout = setTimeout(() => {
                     this.inteval(nextText);
                 }, speed);
-            }else{
-                this.pretext = nextText;
             }
             
             return;
         }
 
         this.write(text);
+        this.pretext = "";
         if (this.isStop) {
             return;
         }
