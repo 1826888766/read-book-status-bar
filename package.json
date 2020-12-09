@@ -9,7 +9,7 @@
 		"小说"
 	],
 	"icon": "logo.png",
-	"version": "0.0.18",
+	"version": "0.0.19",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -25,6 +25,7 @@
 		"onCommand:read-book-status-bar.next",
 		"onCommand:read-book-status-bar.up",
 		"onCommand:read-book-status-bar.down",
+		"onCommand:read-book-status-bar.bosskey",
 		"onCommand:read-book-status-bar.stop"
 	],
 	"contributes": {
@@ -37,6 +38,11 @@
 			"command": "read-book-status-bar.down",
 			"key": "ctrl+alt+s",
 			"mac": "cmd+alt+s",
+			"when": "isLinux || isWindows || isMac"
+		},{
+			"command": "read-book-status-bar.bosskey",
+			"key": "ctrl+alt+b",
+			"mac": "ctrl+alt+b",
 			"when": "isLinux || isWindows || isMac"
 		}],
 		"commands": [
@@ -67,6 +73,10 @@
 			{
 				"command": "read-book-status-bar.stop",
 				"title": "状态栏读书：停止"
+			},
+			{
+				"command": "read-book-status-bar.bosskey",
+				"title": "状态栏读书：老板键"
 			}
 		],
 		"configuration": {
@@ -122,6 +132,11 @@
 					"type": "string",
 					"default": "",
 					"description": "当前阅读书籍url"
+				},
+				"read-book-status-bar.bosstext": {
+					"type": "string",
+					"default": "",
+					"description": "老板键显示文字"
 				},
 				"read-book-status-bar.rowLength": {
 					"type": "number",

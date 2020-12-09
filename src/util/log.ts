@@ -108,12 +108,18 @@ export class Log {
         this.quickPick.onDidChangeValue((e: string) => {
             clearTimeout(time);
             if (this.selectNav) {
-                this.quickPick.hide();
+                if(Number(e)){
+                    if(Number(e) <= this.navList.length/this.navPage.limits)
+                    this.navPage.cur = Number(e);
+                    time = setTimeout(() => {
+                        this.showNavList()
+                    }, 300);
+                }
+                
                 return;
             }
             time = setTimeout(() => {
                 this.search(e);
-
             }, 300);
         });
         this.quickPick.onDidTriggerButton((e: QuickInputButton) => {
@@ -182,10 +188,17 @@ export class Log {
      * 下一页 （淡出列表翻页）
      */
     private next() {
+            var allpage = 0;
+
         if (this.selectNav) {
+            if(this.navList.length % this.navPage.limits>0){
+                allpage = parseInt((this.navList.length / this.navPage.limits).toString()) + 1
+             }else{
+                allpage = this.navList.length / this.navPage.limits
+             }
             if (
-                this.navPage.cur >=
-                parseInt((this.navList.length / this.navPage.limits).toString())
+                
+                this.navPage.cur >=allpage
             ) {
                 window.showWarningMessage("已是最后一页");
                 return;
@@ -193,6 +206,11 @@ export class Log {
             this.navPage.cur += 1;
             this.showNavList();
         } else {
+            if(this.bookList.length % this.bookPage.limits>0){
+                allpage = parseInt((this.bookList.length / this.bookPage.limits).toString()) + 1
+             }else{
+                allpage = this.bookList.length / this.bookPage.limits
+             }
             if (
                 this.bookPage.cur >=
                 parseInt((this.bookList.length / this.bookPage.limits).toString())
@@ -293,14 +311,22 @@ export class Log {
             this.quickPick.show();
         }, 150);
     }
+
     /**
      * 显示选择的书籍目录
      */
     public showNavList() {
         this.quickPick.title = "选择书籍目录";
         let start: number = this.navPage.cur * this.navPage.limits;
-        let end: number = start + Number(this.navPage.limits);
+        let end: number = start + Number(this.navPage.limits)>=(this.navList.length -1)?(this.navList.length - 1): start + Number(this.navPage.limits);
         this.quickPick.value = "";
+        var allpage = 0;
+         if(this.navList.length % this.navPage.limits>0){
+            allpage = parseInt((this.navList.length / this.navPage.limits).toString()) + 1
+         }else{
+            allpage = this.navList.length / this.navPage.limits
+         }
+        this.quickPick.placeholder =`输入数字跳转页码，总页数（${allpage}）`;
         let items = this.navList.slice(start, end);
         this.quickPick.items = items.reduce((pre: any, cur: any, index: number) => {
             pre.push({
@@ -493,6 +519,12 @@ export class Log {
             this.pageIndex--;
         }
         this.inteval();
+    }
+
+    public boss(){
+        this.stop();
+        var text:any = this.config.get('bosstext');
+        this.write(text);
     }
     /**
      * 间隔执行输出

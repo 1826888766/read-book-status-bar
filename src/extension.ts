@@ -73,11 +73,19 @@ export function activate(context: vscode.ExtensionContext) {
       log.down();
     }
   );
+  let bosskey = vscode.commands.registerCommand(
+    "read-book-status-bar.bosskey",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      log.boss();
+    }
+  );
   context.subscriptions.push(search);
   context.subscriptions.push(list);
   context.subscriptions.push(pre);
   context.subscriptions.push(next);
   context.subscriptions.push(stop);
+  context.subscriptions.push(bosskey);
   context.subscriptions.push(start);
 
 
