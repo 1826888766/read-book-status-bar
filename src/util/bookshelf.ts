@@ -2,6 +2,7 @@ import { window } from "vscode";
 
 const path = require("path");
 const fs = require("fs");
+import cnchar from 'cnchar';
 
 export class BookShelf {
 
@@ -50,8 +51,10 @@ export class BookShelf {
         }
         return "";
     }
-    public create() {
-            this.createFile('test.json', JSON.stringify({ 'name': 1 }));
+    public create(book:any) {
+        console.log('汉字'.spell());
+        console.log('汉字'.stroke());
+            // this.createFile(book.title+".json", JSON.stringify(book));
     }
 
     public read(name: string = "") {

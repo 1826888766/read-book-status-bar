@@ -14,6 +14,7 @@ import {
 
     WorkspaceConfiguration,
 } from "vscode";
+import { BookShelf } from "./bookshelf";
 import request from "./request";
 
 export class Log {
@@ -26,7 +27,7 @@ export class Log {
     private timeout: any = 0;
     private selectNav: boolean = false;
     private isStop: boolean = false;
-    private pretext:string = ""; 
+    private pretext: string = "";
 
     private quickPick!: QuickPick<QuickPickItem>;
     private navPage = {
@@ -44,6 +45,7 @@ export class Log {
     private config!: WorkspaceConfiguration;
     private playBar!: StatusBarItem;
     private log!: StatusBarItem;
+    private bookShelf!: BookShelf;
     /**
      *
      * @param config 初始化
@@ -52,6 +54,7 @@ export class Log {
         this.setConfig(config);
         this.initStatusBar();
         this.initQuickPick();
+        this.bookShelf = new BookShelf();
         this.pageIndex = this.config.pageIndex || 0;
         this.navIndex = this.config.navIndex || 0;
         this.navPage.cur = parseInt((this.config.navIndex / this.navPage.limits).toString());
@@ -61,23 +64,23 @@ export class Log {
      * @param config 
      */
     public setConfig(config: WorkspaceConfiguration) {
-        if (this.config&&this.config.type !== config.type) {
-        this.config = config;
-          
-          this.bookList = [];
-          this.navList = [];
-          this.navIndex = 0;
-          this.navPage = {
-            cur: 0,
-            limits: 10,
-          };
-          this.bookPage = {
-            cur: 0,
-            limits: 10,
-            };
-        this.search(this.config.name);
+        if (this.config && this.config.type !== config.type) {
+            this.config = config;
 
-        }else{
+            this.bookList = [];
+            this.navList = [];
+            this.navIndex = 0;
+            this.navPage = {
+                cur: 0,
+                limits: 10,
+            };
+            this.bookPage = {
+                cur: 0,
+                limits: 10,
+            };
+            this.search(this.config.name);
+
+        } else {
             this.config = config;
 
         }
@@ -244,9 +247,9 @@ export class Log {
         } else {
             this.playBar.text = "$(debug-pause)";
             this.playBar.tooltip = "停止";
-            if(!this.getContext()){
+            if (!this.getContext()) {
                 this.read();
-            }else{
+            } else {
                 this.inteval();
             }
         }
@@ -416,7 +419,7 @@ export class Log {
             this.write("请搜索书籍");
             return;
         }
-        if(!isInit){
+        if (!isInit) {
             this.isStop = false;
         }
         this.statusBar.tooltip = this.activeNav.title;
@@ -459,7 +462,7 @@ export class Log {
                 this.playBar.text = "$(debug-pause)";
                 this.playBar.tooltip = "停止";
             }
-            if(this.config.autoRead){
+            if (this.config.autoRead) {
                 this.read(true);
             }
         } else {
@@ -469,27 +472,27 @@ export class Log {
     /**
      * 下一行
      */
-    public down(){
+    public down() {
         let auto = this.config.autoReadRow
-        if(!auto && !this.pretext){
-                this.pageIndex++;
+        if (!auto && !this.pretext) {
+            this.pageIndex++;
         }
-        if(this.pretext){
+        if (this.pretext) {
             this.inteval(this.pretext);
             this.pretext = ""
-        }else{
+        } else {
             this.inteval();
         }
-        
+
     }
     /**
      * 上一行
      */
-    public up(){
+    public up() {
         let auto = this.config.autoReadRow
-        if(auto){
-            this.pageIndex-=2;
-        }else{
+        if (auto) {
+            this.pageIndex -= 2;
+        } else {
             this.pageIndex--;
         }
         this.inteval();
@@ -499,15 +502,15 @@ export class Log {
      */
     private inteval(text = "") {
         text = text || this.getContext();
-        let auto = this.config.autoReadRow
-        if(auto){
+        let auto = this.config.autoReadRow;
+        if (auto) {
             clearTimeout(this.timeout);
             this.pageIndex++;
         }
-        if(!auto&&text === undefined){
+        if (!auto && text === undefined) {
             window.showErrorMessage("无章节内容，请先点击开始、或下一章");
             return false;
-        }else if(auto&&text === undefined){
+        } else if (auto && text === undefined) {
             this.nextPage();
             return;
         }
@@ -528,14 +531,14 @@ export class Log {
                 return;
             }
             let nextText = text.substring(this.config.rowLength);
-            if(auto){
+            if (auto) {
                 this.timeout = setTimeout(() => {
                     this.inteval(nextText);
                 }, speed);
-            }else{
+            } else {
                 this.pretext = nextText;
             }
-            
+
             return;
         }
 
@@ -543,11 +546,22 @@ export class Log {
         if (this.isStop) {
             return;
         }
-        if(auto){
+        if (auto) {
             this.timeout = setTimeout(() => {
                 this.inteval();
             }, speed);
         }
-        
+
+    }
+
+    public addBookShelf(){
+        this.bookShelf.create({
+            title:this.active.label,
+            url:this.active.detail,
+            navList:this.navList,
+            navPage:this.navPage,
+            curent:this.activeNav.detail,
+            navIndex:this.navIndex
+        });
     }
 }
