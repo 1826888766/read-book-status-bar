@@ -1,0 +1,9 @@
+-- SQLite
+-- DROP TABLE book;
+-- CREATE TABLE book(
+--    id INTEGER PRIMARY KEY   AUTOINCREMENT,
+--    title           TEXT   ,
+--    type            TEXT   ,
+--    url       TEXT,
+--    nav_index         INT
+-- );
