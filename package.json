@@ -104,12 +104,14 @@
 				"read-book-status-bar.type": {
 					"type": "string",
 					"enum": [
+						"file",
 						"biquge",
 						"qidian",
 						"zongheng"
 					],
 					"default": "biquge",
 					"enumDescriptions": [
+						"本地文件[txt]",
 						"笔趣阁",
 						"起点中文网",
 						"纵横中文网"

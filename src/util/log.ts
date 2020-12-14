@@ -11,8 +11,8 @@ import {
     WorkspaceConfiguration,
 } from "vscode";
 import { BookShelf } from "./bookshelf";
-import { Import } from "./import";
 import request from "./request";
+const path = require("path");
 
 export class Log {
     private statusBar !: StatusBarItem;
@@ -43,6 +43,7 @@ export class Log {
     private playBar!: StatusBarItem;
     private log!: StatusBarItem;
     private bookShelf!: BookShelf;
+    private _importIcon!:StatusBarItem;
     /**
      *
      * @param config 初始化
@@ -63,7 +64,11 @@ export class Log {
     public setConfig(config: WorkspaceConfiguration) {
         if (this.config && this.config.type !== config.type) {
             this.config = config;
-
+            if (this.config.type === 'file') {
+                this._importIcon.show();
+            }else{
+                this._importIcon.hide();
+            }
             this.bookList = [];
             this.navList = [];
             this.navIndex = 0;
@@ -157,11 +162,13 @@ export class Log {
         search.text = "$(search)";
         search.tooltip = "搜索";
         search.show();
-        let _import = window.createStatusBarItem(StatusBarAlignment.Right);
-        _import.command = "read-book-status-bar.import";
-        _import.text = "$(add)";
-        _import.tooltip = "导入";
-        _import.show();
+        this._importIcon = window.createStatusBarItem(StatusBarAlignment.Right);
+        this._importIcon.command = "read-book-status-bar.import";
+        this._importIcon.text = "$(add)";
+        this._importIcon.tooltip = "导入";
+        if (this.config.type === 'file') {
+            this._importIcon.show();
+        }
     }
     /**
      * 上一页 （淡出列表翻页）
@@ -278,6 +285,16 @@ export class Log {
      * 显示搜索道德书籍列表
      */
     public showBookList() {
+        this.quickPick.buttons = [
+            {
+                tooltip: "上一页",
+                iconPath: new ThemeIcon("arrow-left"),
+            },
+            {
+                tooltip: "下一页",
+                iconPath: new ThemeIcon("arrow-right"),
+            },
+        ];
         this.quickPick.title = "选择书籍";
         let items = [];
         if (this.bookList.length > 10) {
@@ -302,6 +319,16 @@ export class Log {
      * 显示选择的书籍目录
      */
     public showNavList() {
+        this.quickPick.buttons = [
+            {
+                tooltip: "上一页",
+                iconPath: new ThemeIcon("arrow-left"),
+            },
+            {
+                tooltip: "下一页",
+                iconPath: new ThemeIcon("arrow-right"),
+            },
+        ];
         this.quickPick.title = "选择书籍目录";
         let start: number = this.navPage.cur * this.navPage.limits;
         let end: number = start + Number(this.navPage.limits);
@@ -339,16 +366,7 @@ export class Log {
     public async search(name: string = "") {
         this.selectNav = false;
         this.stop(true); // 强制停止
-        this.quickPick.buttons = [
-            {
-                tooltip: "上一页",
-                iconPath: new ThemeIcon("arrow-left"),
-            },
-            {
-                tooltip: "下一页",
-                iconPath: new ThemeIcon("arrow-right"),
-            },
-        ];
+
         if (name == "列表") {
             return this.showBookList();
         }
@@ -367,16 +385,6 @@ export class Log {
      */
     public async list() {
         this.name = this.active.label;
-        this.quickPick.buttons = [
-            {
-                tooltip: "上一页",
-                iconPath: new ThemeIcon("arrow-left"),
-            },
-            {
-                tooltip: "下一页",
-                iconPath: new ThemeIcon("arrow-right"),
-            },
-        ];
         this.updateConfig("name", this.active.label);
         this.updateConfig("link", this.active.detail);
         this.quickPick.busy = true;
@@ -568,21 +576,10 @@ export class Log {
     }
 
     public import(file: string = '') {
-        var book = new Import((e) => {
-            this.navPage = {
-                cur: 1,
-                limits: 10
-            };
-            this.navList = e.navList.reduce((pre: any, cur: any, index: any) => {
-                pre.push({
-                    title: cur[0].replace(/\n/g,''),
-                    link: index
-                });
-                return pre;
-            }, []);
-            console.log(this.navList);
-            this.showNavList();
-        }, file, this.loading);
-
+        this.selectNav = true;
+        this.updateConfig('name',  path.basename(file));
+        this.updateConfig('link', file);
+        this.updateConfig('navIndex',0);
+        this.list();
     }
 }
