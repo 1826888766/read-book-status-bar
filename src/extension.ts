@@ -80,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
       var res = vscode.window.showOpenDialog({
         title:"请选择小说文本txt",
         filters:{
-          'File':['txt']
+          "file":['txt']
         }
       });
       res.then((file:any)=>{

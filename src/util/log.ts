@@ -10,7 +10,7 @@ import {
     QuickInputButton,
     WorkspaceConfiguration,
 } from "vscode";
-import { BookShelf } from "./bookshelf";
+// import { BookShelf } from "./bookshelf";
 import request from "./request";
 const path = require("path");
 
@@ -42,7 +42,7 @@ export class Log {
     private config!: WorkspaceConfiguration;
     private playBar!: StatusBarItem;
     private log!: StatusBarItem;
-    private bookShelf!: BookShelf;
+    // private bookShelf!: BookShelf;
     private _importIcon!:StatusBarItem;
     /**
      *
@@ -52,7 +52,7 @@ export class Log {
         this.setConfig(config);
         this.initStatusBar();
         this.initQuickPick();
-        this.bookShelf = new BookShelf();
+        // this.bookShelf = new BookShelf();
         this.pageIndex = this.config.pageIndex || 0;
         this.navIndex = this.config.navIndex || 0;
         this.navPage.cur = parseInt((this.config.navIndex / this.navPage.limits).toString());
@@ -122,7 +122,7 @@ export class Log {
             }, 300);
         });
         this.quickPick.onDidTriggerButton((e: QuickInputButton) => {
-            if (e.tooltip == "上一页") {
+            if (e.tooltip === "上一页") {
                 this.pre();
             } else {
                 this.next();
@@ -134,6 +134,15 @@ export class Log {
      * 初始化底部状态栏按钮
      */
     private initStatusBar() {
+        this._importIcon = window.createStatusBarItem(StatusBarAlignment.Right);
+        this._importIcon.command = "read-book-status-bar.import";
+        this._importIcon.text = "$(add)";
+        this._importIcon.tooltip = "导入";
+        this._importIcon.show();
+
+        if (this.config.type !== 'file') {
+            this._importIcon.hide();
+        }
         this.log = window.createStatusBarItem(StatusBarAlignment.Left);
         this.log.show();
         this.statusBar = window.createStatusBarItem(StatusBarAlignment.Right);
@@ -162,27 +171,21 @@ export class Log {
         search.text = "$(search)";
         search.tooltip = "搜索";
         search.show();
-        this._importIcon = window.createStatusBarItem(StatusBarAlignment.Right);
-        this._importIcon.command = "read-book-status-bar.import";
-        this._importIcon.text = "$(add)";
-        this._importIcon.tooltip = "导入";
-        if (this.config.type === 'file') {
-            this._importIcon.show();
-        }
+        
     }
     /**
      * 上一页 （淡出列表翻页）
      */
     private pre() {
         if (this.selectNav) {
-            if (this.navPage.cur == 0) {
+            if (this.navPage.cur === 0) {
                 window.showWarningMessage("已是第一页");
                 return;
             }
             this.navPage.cur -= 1;
             this.showNavList();
         } else {
-            if (this.bookPage.cur == 0) {
+            if (this.bookPage.cur === 0) {
                 window.showWarningMessage("已是第一页");
                 return;
             }
@@ -220,7 +223,7 @@ export class Log {
      * 上一章
      */
     public prePage() {
-        if (this.navIndex == 0) {
+        if (this.navIndex === 0) {
             window.showWarningMessage("已是第一章");
             return;
         }
@@ -367,7 +370,7 @@ export class Log {
         this.selectNav = false;
         this.stop(true); // 强制停止
 
-        if (name == "列表") {
+        if (name === "列表") {
             return this.showBookList();
         }
         this.loading("正在搜索书籍");
@@ -395,7 +398,7 @@ export class Log {
             this.quickPick.busy = false;
             return;
         }
-        this.navList = await request.setDirvers(this.config.type).list({
+        this.navList = await request.setConfig(this.config).setDirvers(this.config.type).list({
             link: this.active.detail,
             name: this.active.label,
         });
@@ -564,16 +567,16 @@ export class Log {
 
     }
 
-    public addBookShelf() {
-        this.bookShelf.create({
-            title: this.active.label,
-            url: this.active.detail,
-            navList: this.navList,
-            navPage: this.navPage,
-            curent: this.activeNav.detail,
-            navIndex: this.navIndex
-        });
-    }
+    // public addBookShelf() {
+    //     this.bookShelf.create({
+    //         title: this.active.label,
+    //         url: this.active.detail,
+    //         navList: this.navList,
+    //         navPage: this.navPage,
+    //         curent: this.activeNav.detail,
+    //         navIndex: this.navIndex
+    //     });
+    // }
 
     public import(file: string = '') {
         this.selectNav = true;

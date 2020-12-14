@@ -5,10 +5,9 @@ class File implements Dirvers {
   navlist: any;
   name: string = "";
     _import:any;
-  async list(item: any) {
-    this._import =  new Import();
+  async list(item: any,config:any) {
+    this._import =  new Import({rule:config.rule});
     await this._import.read(item.link);
-    console.log(this._import.navList);
     return this._import.navList;
   }
   

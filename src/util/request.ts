@@ -25,20 +25,26 @@ class request {
         this.dirvers = name;
         return this;
     }
-
+ /**
+     * 设置配置
+     */
+    setConfig(config:any) {
+        this.config = config;
+        return this;
+    }
     list(item:any):any{
         this.getDirvers();
-       return this.dirver.list(item);
+       return this.dirver.list(item,this.config);
     }
 
     async search(name:string){
         this.getDirvers();
-        return await this.dirver.search(name);
+        return await this.dirver.search(name,this.config);
     }
 
     read(id:any){
         this.getDirvers();
-        return this.dirver.read(id);
+        return this.dirver.read(id,this.config);
     }
 }
 

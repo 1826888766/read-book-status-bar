@@ -6,9 +6,12 @@ export class Import {
     public rule = /\s{1}第.{1,7}(章|节|集|卷|部|篇).{0,}/g;
     public navList:any = [];
     public content: any = [];
-    constructor(file: string = "") {
-        if (file) {
-            this.read(file);
+    constructor(config:any) {
+        if (config.rule) {
+            this.rule =  new RegExp("/"+config.rule+"/g");
+        }
+        if (config.file) {
+            this.read(config.file);
         }
     }
 
@@ -25,7 +28,7 @@ export class Import {
             var data = fs.readFileSync(file);
             this.praseNav(data.toString());
             this.praseContent(data.toString());
-            resolve();
+            resolve(this);
         });
     }
 

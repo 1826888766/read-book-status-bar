@@ -137,6 +137,11 @@
 					"type": "number",
 					"default": 40,
 					"description": "每行最多显示字数默认40，必须大于20,否则阅读时间会自动减半"
+				},
+				"read-book-status-bar.rule": {
+					"type": "string",
+					"default": "\\s{1}第.{1,7}(章|节|集|卷|部|篇).{0,}",
+					"description": "文件驱动断章正则"
 				}
 			}
 		}
