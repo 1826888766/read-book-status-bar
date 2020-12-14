@@ -73,12 +73,32 @@ export function activate(context: vscode.ExtensionContext) {
       log.down();
     }
   );
+  let _import = vscode.commands.registerCommand(
+    "read-book-status-bar.import",
+    () => {
+      // The code you place here will be executed every time your command is executed
+      var res = vscode.window.showOpenDialog({
+        title:"请选择小说文本txt",
+        filters:{
+          'File':['txt']
+        }
+      });
+      res.then((file:any)=>{
+        console.log(file);
+        log.import(file[0].path);
+      });
+      // log.import();
+    }
+  );
   context.subscriptions.push(search);
   context.subscriptions.push(list);
   context.subscriptions.push(pre);
   context.subscriptions.push(next);
   context.subscriptions.push(stop);
   context.subscriptions.push(start);
+  context.subscriptions.push(up);
+  context.subscriptions.push(down);
+  context.subscriptions.push(_import);
 
 
 

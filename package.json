@@ -25,6 +25,7 @@
 		"onCommand:read-book-status-bar.next",
 		"onCommand:read-book-status-bar.up",
 		"onCommand:read-book-status-bar.down",
+		"onCommand:read-book-status-bar.import",
 		"onCommand:read-book-status-bar.stop"
 	],
 	"contributes": {
@@ -70,6 +71,10 @@
 			{
 				"command": "read-book-status-bar.stop",
 				"title": "状态栏读书：停止"
+			},
+			{
+				"command": "read-book-status-bar.import",
+				"title": "状态栏读书：导入"
 			}
 		],
 		"configuration": {
@@ -159,8 +164,8 @@
 	"dependencies": {
 		"axios": "^0.20.0",
 		"cheerio": "^1.0.0-rc.3",
-		"cnchar": "^2.2.8",
-		"iconv-lite": "^0.6.2"
+		"iconv-lite": "^0.6.2",
+		"sqlite3": "^5.0.0"
 	},
 	"bugs": {
 		"url": "https://github.com/1826888766/read-book-status-bar/issues"

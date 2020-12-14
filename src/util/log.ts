@@ -1,6 +1,3 @@
-/* eslint-disable eqeqeq */
-const path = require("path");
-const fs = require("fs");
 import { setTimeout } from "timers";
 import {
     window,
@@ -11,10 +8,10 @@ import {
     ConfigurationTarget,
     ThemeIcon,
     QuickInputButton,
-
     WorkspaceConfiguration,
 } from "vscode";
 import { BookShelf } from "./bookshelf";
+import { Import } from "./import";
 import request from "./request";
 
 export class Log {
@@ -160,6 +157,11 @@ export class Log {
         search.text = "$(search)";
         search.tooltip = "搜索";
         search.show();
+        let _import = window.createStatusBarItem(StatusBarAlignment.Right);
+        _import.command = "read-book-status-bar.import";
+        _import.text = "$(add)";
+        _import.tooltip = "导入";
+        _import.show();
     }
     /**
      * 上一页 （淡出列表翻页）
@@ -473,13 +475,13 @@ export class Log {
      * 下一行
      */
     public down() {
-        let auto = this.config.autoReadRow
-        if(!auto && !this.pretext){
+        let auto = this.config.autoReadRow;
+        if (!auto && !this.pretext) {
             this.pageIndex++;
         }
         if (this.pretext) {
             this.inteval(this.pretext);
-            this.pretext = ""
+            this.pretext = "";
         } else {
             this.inteval();
         }
@@ -489,7 +491,7 @@ export class Log {
      * 上一行
      */
     public up() {
-        let auto = this.config.autoReadRow
+        let auto = this.config.autoReadRow;
         if (auto) {
             this.pageIndex -= 2;
         } else {
@@ -514,7 +516,7 @@ export class Log {
             this.nextPage();
             return;
         }
-        text = text.replace(/[\n]/g,'').trim();
+        text = text.replace(/[\n]/g, '').trim();
         if (!text) {
             this.down();
             return;
@@ -532,7 +534,7 @@ export class Log {
             }
             let nextText = text.substring(this.config.rowLength);
             this.pretext = nextText;
-            if(auto){
+            if (auto) {
                 this.timeout = setTimeout(() => {
                     this.inteval(nextText);
                 }, speed);
@@ -554,14 +556,33 @@ export class Log {
 
     }
 
-    public addBookShelf(){
+    public addBookShelf() {
         this.bookShelf.create({
-            title:this.active.label,
-            url:this.active.detail,
-            navList:this.navList,
-            navPage:this.navPage,
-            curent:this.activeNav.detail,
-            navIndex:this.navIndex
+            title: this.active.label,
+            url: this.active.detail,
+            navList: this.navList,
+            navPage: this.navPage,
+            curent: this.activeNav.detail,
+            navIndex: this.navIndex
         });
+    }
+
+    public import(file: string = '') {
+        var book = new Import((e) => {
+            this.navPage = {
+                cur: 1,
+                limits: 10
+            };
+            this.navList = e.navList.reduce((pre: any, cur: any, index: any) => {
+                pre.push({
+                    title: cur[0].replace(/\n/g,''),
+                    link: index
+                });
+                return pre;
+            }, []);
+            console.log(this.navList);
+            this.showNavList();
+        }, file, this.loading);
+
     }
 }
