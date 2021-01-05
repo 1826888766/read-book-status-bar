@@ -56,6 +56,7 @@ export class Log {
         this.pageIndex = this.config.pageIndex || 0;
         this.navIndex = this.config.navIndex || 0;
         this.navPage.cur = parseInt((this.config.navIndex / this.navPage.limits).toString());
+        this.inteval("当然，把握住机会的前提是“倒吊人”不鲁莽，不冒进，\r\n时刻记得请求庇佑，所以，克莱恩特意强调了一句“很危\r\n险”让“倒吊人”在展开相应行动前记得向“愚者”先生祈祷");
     }
     /**
      * 设置配置文件
@@ -519,7 +520,6 @@ export class Log {
         }
         if (this.pretext) {
             this.inteval(this.pretext);
-            this.pretext = "";
         } else {
             this.inteval();
         }
@@ -547,6 +547,7 @@ export class Log {
      * 间隔执行输出
      */
     private inteval(text = "") {
+
         text = text || this.getContext();
         let auto = this.config.autoReadRow;
         if (auto) {
@@ -573,14 +574,10 @@ export class Log {
 
         if (text.length > this.config.rowLength) {
             this.write(text.substring(0, this.config.rowLength));
-            if (this.isStop) {
-                return;
-            }
-            let nextText = text.substring(this.config.rowLength);
-            this.pretext = nextText;
+            this.pretext = text.substring(this.config.rowLength);
             if (auto) {
                 this.timeout = setTimeout(() => {
-                    this.inteval(nextText);
+                    this.inteval(this.pretext);
                 }, speed);
             }
 
