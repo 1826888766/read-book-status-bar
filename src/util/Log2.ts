@@ -222,7 +222,6 @@ export class Log2 {
             nav_id:0,
             active:1
         });
-        Books.getInstance().activeBook(this.active.id);
         Tools.getInstance().showBusy();
         this.write("正在获取目录...");
         if (this.catalogList.length > 0) {
