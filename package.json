@@ -30,6 +30,56 @@
 		"onCommand:read-book-status-bar.stop"
 	],
 	"contributes": {
+		"viewsWelcome": [
+			{
+				"view": "catalog",
+				"contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm)."
+			}
+		],
+		"views": {
+			"read-book-status-bar": [
+				{
+					"id": "catalog",
+					"name": "目录",
+					"icon": "book.svg",
+					"contextualTitle": "catalog"
+				},
+				{
+					"id": "books",
+					"name": "书架"
+				}
+			]
+		},
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "read-book-status-bar.select-catalog",
+					"group": "inline",
+					"when": "view == catalog"
+				},
+				{
+					"command": "read-book-status-bar.select-book",
+					"group": "inline",
+					"when": "view == books"
+				}
+			],
+			"view/title": [
+				{
+					"command": "read-book-status-bar.refresh",
+					"group": "navigation",
+					"when": "view == catalog"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "read-book-status-bar",
+					"title": "状态栏读书",
+					"icon": "book.svg"
+				}
+			]
+		},
 		"keybindings": [
 			{
 				"command": "read-book-status-bar.up",
@@ -54,6 +104,30 @@
 			{
 				"command": "read-book-status-bar.search",
 				"title": "状态栏读书：搜索"
+			},
+			{
+				"command": "read-book-status-bar.refresh",
+				"title": "重新拉取目录",
+				"icon": {
+					"light": "./icon/refresh-light.svg",
+					"dark": "./icon/refresh-dark.svg"
+				}
+			},
+			{
+				"command": "read-book-status-bar.select-catalog",
+				"title": "阅读",
+				"icon": {
+					"light": "./icon/read-light.svg",
+					"dark": "./icon/read-dark.svg"
+				}
+			},
+			{
+				"command": "read-book-status-bar.select-book",
+				"title": "阅读",
+				"icon": {
+					"light": "./icon/read-light.svg",
+					"dark": "./icon/read-dark.svg"
+				}
 			},
 			{
 				"command": "read-book-status-bar.list",

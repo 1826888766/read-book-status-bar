@@ -10,7 +10,9 @@ import {
     QuickInputButton,
     WorkspaceConfiguration,
 } from "vscode";
-// import { BookShelf } from "./bookshelf";
+import {Print} from "./print";
+import { Books } from "./Books";
+var bookShelf = new Books();
 import request from "./request";
 const path = require("path");
 
@@ -35,13 +37,12 @@ export class Log {
         cur: 0,
         limits: 10,
     };
-    private active!: QuickPickItem;
-    private activeNav: any = [];
+     active!: QuickPickItem;
+     activeNav: any = [];
     name: string = "";
 
     private config!: WorkspaceConfiguration;
     private playBar!: StatusBarItem;
-    private log!: StatusBarItem;
     // private bookShelf!: BookShelf;
     private _importIcon!:StatusBarItem;
     /**
@@ -52,11 +53,9 @@ export class Log {
         this.setConfig(config);
         this.initStatusBar();
         this.initQuickPick();
-        // this.bookShelf = new BookShelf();
         this.pageIndex = this.config.pageIndex || 0;
         this.navIndex = this.config.navIndex || 0;
         this.navPage.cur = parseInt((this.config.navIndex / this.navPage.limits).toString());
-        this.inteval("当然，把握住机会的前提是“倒吊人”不鲁莽，不冒进，\r\n时刻记得请求庇佑，所以，克莱恩特意强调了一句“很危\r\n险”让“倒吊人”在展开相应行动前记得向“愚者”先生祈祷");
     }
     /**
      * 设置配置文件
@@ -97,6 +96,7 @@ export class Log {
         this.quickPick.onDidChangeSelection((res: QuickPickItem[]) => {
             if (res[0]) {
                 if (this.selectNav) {
+                    
                     this.navIndex = Number(res[0].label.split(".")[0]);
                     this.activeNav = this.navList[this.navIndex];
                     this.read();
@@ -106,6 +106,13 @@ export class Log {
                     this.navPage.cur = 0;
                     this.navList = [];
                     this.list();
+                    bookShelf.addBooks({
+                        title:this.active.label,
+                        type:this.config.type,
+                        url:this.active.detail,
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        nav_index:0
+                    });
                 }
             }
         });
@@ -151,8 +158,6 @@ export class Log {
         if (this.config.type !== 'file') {
             this._importIcon.hide();
         }
-        this.log = window.createStatusBarItem(StatusBarAlignment.Left);
-        this.log.show();
         this.statusBar = window.createStatusBarItem(StatusBarAlignment.Right);
         this.statusBar.command = "read-book-status-bar.list";
         this.statusBar.text = "$(book)";
@@ -289,11 +294,11 @@ export class Log {
     }
     // 输出文本
     public write(msg: string) {
-        this.log.text = msg;
+        Print.getInstance().write(msg);
     }
     // 加载文本
     public loading(msg: string) {
-        this.log.text = "$(loading)" + msg;
+        this.write("$(loading)" + msg);
     }
     /**
      * 销毁方法
@@ -301,7 +306,7 @@ export class Log {
     public dispose() {
         this.statusBar.dispose();
         this.quickPick.dispose();
-        this.log.dispose();
+        Print.getInstance().dispose();
 
     }
     /**
@@ -430,6 +435,7 @@ export class Log {
             link: this.active.detail,
             name: this.active.label,
         });
+        bookShelf.addBooksNav(this.name,this.navList);
         this.showNavList();
         this.quickPick.busy = false;
 
@@ -455,7 +461,7 @@ export class Log {
     /**
      * 读取章节内容
      */
-    public async read(isInit = false) {
+    public async read(isInit = false,content="") {
         if (!this.activeNav) {
             this.write("请搜索书籍");
             return;

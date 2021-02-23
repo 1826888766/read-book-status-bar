@@ -30,6 +30,7 @@ class request {
      */
     setConfig(config:any) {
         this.config = config;
+        this.dirvers = config.type;
         return this;
     }
     list(item:any):any{

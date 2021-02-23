@@ -1,10 +1,12 @@
 const sqlite = require("sqlite3");
 const path = require("path");
 export class Sqlite {
+    
     private filename = "bookshelf.db";
     public db: any;
     private whereOpt: any = [];
     private fieldOpt: any = [];
+    private orderOpt: any = [];
     private tableOpt: string = "";
     constructor() {
         this.db = new sqlite.Database(this.filename, function (e: any) {
@@ -14,12 +16,21 @@ export class Sqlite {
         });
         this.db.get("SELECT * FROM book", (e: any) => {
             if (e) {
-                this.db.run("CREATE TABLE book(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,type TEXT,url TEXT,nav_index INT);");
-                this.db.run("CREATE TABLE book_nav(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INT,url TEXT, title INT,content TEXT);");
+                // id 名称 类型 链接地址 当前阅读章节 章节索引
+                this.db.run("CREATE TABLE book(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,type TEXT,url TEXT,nav_id int,nav_index INT,active INT);");
+                // id 书籍id 链接地址 阅读状态 章节内容
+                this.db.run("CREATE TABLE book_nav(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INT,url TEXT, title TEXT,read INT,content TEXT);");
             }
         });
     }
-
+    order(field:Array<string>|string,type:string = "asc") {
+        if(Array.isArray(field)){
+           this.orderOpt = this.orderOpt.concat(field);
+            return this;
+        }
+        this.orderOpt.push(`${field} ${type}`);
+        return this;
+    }
     public run(sql: string) {
         this.db.run(sql, function (e: any) {
             if (e) {
@@ -32,6 +43,7 @@ export class Sqlite {
         this.tableOpt = name;
         this.whereOpt = [];
         this.fieldOpt = [];
+        this.orderOpt = [];
         return this;
     }
 
@@ -54,20 +66,37 @@ export class Sqlite {
 
     }
 
-    public update() {
-
+    async update(data:any) {
+        var where = this.whereOpt.join(" AND ");
+        var dataArr = [];
+        for(var key in data){
+            dataArr.push(`${key} =  "${data[key]}"`);
+        }
+        var dataStr = dataArr.join(",");
+        var sql = `UPDATE ${this.tableOpt} SET  ${dataStr}  WHERE ${where}`;
+        return this.run(sql);
     }
     public field(name: any) {
         if (Array.isArray(name)) {
-            this.fieldOpt=  this.fieldOpt.concat(name);
+            this.fieldOpt = this.fieldOpt.concat(name);
         } else if (typeof name === "string") {
             this.fieldOpt = this.fieldOpt.concat(name.split(','));
         }
         return this;
     }
 
-    public where(field: string, op: string, value: any = "") {
-        if (!value) {
+    public where(field: any, op: any = "", value: any = "") {
+        if(typeof field === "object"){
+            for(var key in field){
+                if (typeof field[key] === "number") {
+                    this.whereOpt.push(`${key} = ${field[key]}`);
+                } else {
+                    this.whereOpt.push(`${key} = "${field[key]}"`);
+                }
+            }
+            return this;
+        }
+        if ("" === value) {
             value = op;
             op = "=";
         }
@@ -78,11 +107,16 @@ export class Sqlite {
         }
         return this;
     }
-    public find() {
+    public async find() {
         return new Promise((resolve, reject) => {
             var field = this.fieldOpt.join(",") || "*";
-            var where = this.whereOpt.join(" AND ");
-            var sql = `SELECT ${field} FROM ${this.tableOpt} WHERE ${where};`;
+            var sql = `SELECT ${field} FROM ${this.tableOpt}`;
+            if (this.whereOpt.length){
+                sql += " WHERE "+ this.whereOpt.join(" AND ");
+            }
+            if (this.orderOpt.length){
+                sql += " ORDER BY "+ this.orderOpt.join(",");
+            }
             var data = this.db.get(sql, function (err: any, row: any) {
                 if (err) {
                     reject(err);
@@ -93,16 +127,22 @@ export class Sqlite {
         });
     }
 
-    public select() {
+    public async select() {
         return new Promise((resolve, reject) => {
             var field = this.fieldOpt.join(",") || "*";
             var where = this.whereOpt.join(" AND ");
-            if(!this.tableOpt){
+            if (!this.tableOpt) {
                 return false;
             }
-            var sql = `SELECT ${field} FROM ${this.tableOpt} WHERE ${where};`;
-             this.db.all(sql, function (err: any, row: any) {
-                 console.log(sql);
+            var sql = `SELECT ${field} FROM ${this.tableOpt} `;
+
+            if (where) {
+                sql += ` WHERE ${where}`;
+            }
+            if (this.orderOpt.length){
+                sql += " ORDER "+ this.orderOpt.join(",");
+            }
+            this.db.all(sql, function (err: any, row: any) {
                 if (err) {
                     reject(err);
                 } else {
