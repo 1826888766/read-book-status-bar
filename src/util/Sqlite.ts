@@ -3,7 +3,7 @@ const path = require("path");
 import  * as vscode from "vscode";
 export class Sqlite {
     
-    private filename = "bookshelf3.db";
+    private filename = "bookshelf4.db";
     public db: any;
     private whereOpt: any = [];
     private fieldOpt: any = [];

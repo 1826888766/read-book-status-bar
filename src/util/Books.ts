@@ -80,7 +80,7 @@ export class Books {
                 link: config.url,
                 name: config.name,
             });
-            this.addBooksNav(config.title, list);
+            this.addBooksNav(config, list);
         }
         return Promise.resolve(list);
     }
