@@ -143,11 +143,11 @@ export class Log2 {
                 vscode.window.showInformationMessage("没有正在阅读的书籍");
                 return false;
             }
+            this.catalogProvider.setName(this.active.id);
             this.catalogList = await Books.getInstance().getCatalogList(this.active);
             this.activeCatalog = {
                 id: this.active.nav_id
             };
-            this.catalogProvider.setName(this.name);
             if (this.isStop) {
                 this.playBar.text = "$(debug-start)";
                 this.playBar.tooltip = "开始";
@@ -261,14 +261,17 @@ export class Log2 {
                 });
         }
     }
-
+    /**
+     * 目录列表
+     * @param showQuick 是否显示弹窗目录
+     */
     async list(showQuick = false) {
         this.name = this.active.title;
         this.updateConfig({
             name: this.active.title,
             link: this.active.url
         });
-
+        // 获取或添加书籍
         this.active = await Books.getInstance().addBooks({
             title: this.active.title,
             type: this.active.type,
@@ -280,7 +283,7 @@ export class Log2 {
         Tools.getInstance().showBusy();
         this.write("正在获取目录...");
         this.catalogList = await Books.getInstance().getCatalogList(this.active);
-        this.catalogProvider.setName(this.name);
+        this.catalogProvider.setName(this.active.id);
         showQuick&& this.showCatalogQuickPick();
         Tools.getInstance().hideBusy();
     }
@@ -300,6 +303,7 @@ export class Log2 {
         this.selectCatalog = true;
         let res = await Books.getInstance().getContent(this.activeCatalog.id, this.active.type);
         await Books.getInstance().activeCatalog(this.activeCatalog.id);
+        this.catalogProvider.setName(this.active.id);
         this.setContext(res);
         this.inteval();
     }
@@ -327,7 +331,7 @@ export class Log2 {
             return;
         }
         this.pageIndex = 0;
-        this.read();
+        await this.read();
     }
     /**
      * 下一章
@@ -340,7 +344,7 @@ export class Log2 {
             return;
         }
         this.pageIndex = 0;
-        this.read();
+        await this.read();
     }
     /**
      * 上一行
@@ -522,7 +526,7 @@ export class Log2 {
         // 搜索
         vscode.commands.registerCommand("read-book-status-bar.search", () => this.search());
         // 重新获取目录
-        vscode.commands.registerCommand("read-book-status-bar.refresh", () => this.catalogProvider.setName(this.name));
+        vscode.commands.registerCommand("read-book-status-bar.refresh", () => this.catalogProvider.setName(this.active.id));
         // 老板键
         vscode.commands.registerCommand("read-book-status-bar.bosskey", () => this.boss());
         // 上一行
@@ -567,8 +571,8 @@ export class Log2 {
                 ...e.element
             };
             this.pageIndex = 0;
-            await this.read();
-            this.catalogProvider.setName(this.name);
+            this.read();
+            
         });
 
         this.bookProvider = new BookProvider();

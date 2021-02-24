@@ -22,7 +22,7 @@ export class Books {
         var book: any = await this.sqlite.table('book').where('type', data.type).where('title', data.title).find();
         if(!book){
             data['active'] = 1;
-            this.sqlite.table("book").create(data);
+            await this.sqlite.table("book").create(data);
         }else{
             await this.sqlite.table("book").where("id",book.id).update({active:1});
         }

@@ -42,7 +42,7 @@ class File implements Dirvers {
 
   async save(item: any) {
     this._import.navList;
-    this.sqlite.table('book').create({
+    await this.sqlite.table('book').create({
       title: this.name,
       url: item.link,
       type: 'file',

@@ -31,13 +31,16 @@ export class Sqlite {
         this.orderOpt.push(`${field} ${type}`);
         return this;
     }
-    public run(sql: string) {
+    async run(sql: string) {
+       return new Promise((resolve)=>{
         this.db.run(sql, function (e: any) {
             if (e) {
                 console.log(e);
                 throw Error(e);
             }
+            resolve(1);
         });
+       }) ;
     }
     public table(name: string) {
         this.tableOpt = name;
@@ -47,7 +50,7 @@ export class Sqlite {
         return this;
     }
 
-    public create(data: any) {
+    async create(data: any) {
         var field = Object.keys(data);
         var value: any = [];
         Object.values(data).forEach((item) => {
@@ -59,7 +62,7 @@ export class Sqlite {
         });
 
         var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value})`;
-        return this.run(sql);
+        return await this.run(sql);
     }
 
     public delete() {
