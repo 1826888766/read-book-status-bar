@@ -2,7 +2,7 @@ const sqlite = require("sqlite3");
 const path = require("path");
 export class Sqlite {
     
-    private filename = "bookshelf.db";
+    private filename = "bookshelf2.db";
     public db: any;
     private whereOpt: any = [];
     private fieldOpt: any = [];
