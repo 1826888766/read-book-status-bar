@@ -384,7 +384,7 @@ export class Log2 {
             clearTimeout(this.timeout);
             this.pageIndex++;
         }
-        this.playBar.text = "$(debug-stop)";
+        this.playBar.text = "$(debug-pause)";
         this.playBar.command = "read-book-status-bar.stop";
         this.playBar.tooltip = "停止";
         if (!auto && text === undefined) {
@@ -611,6 +611,9 @@ export class Log2 {
     // 停止阅读
     stop() {
         this.isStop = true;
+        this.playBar.text = "$(debug-start)";
+        this.playBar.command = "read-book-status-bar.start";
+        this.playBar.tooltip = "开始";
         clearTimeout(this.timeout);
     }
 
