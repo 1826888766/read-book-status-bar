@@ -61,6 +61,10 @@
 					"command": "read-book-status-bar.select-book",
 					"group": "inline",
 					"when": "view == books"
+				},
+				{
+					"command": "read-book-status-bar.webview",
+					"group": "navigation"
 				}
 			],
 			"view/title": [
@@ -168,6 +172,10 @@
 			{
 				"command": "read-book-status-bar.import",
 				"title": "状态栏读书：导入"
+			},
+			{
+				"command": "read-book-status-bar.webview",
+				"title": "在浏览器中打开"
 			}
 		],
 		"configuration": {

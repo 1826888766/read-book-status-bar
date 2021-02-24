@@ -71,7 +71,7 @@ export class Books {
 
     async getCatalogList(config:any) {
         var book: any = await this.sqlite.table('book').where('type', config.type).where('title', config.title).find();
-        this.sqlite.table("book").where('id',book.id).update({active:1});
+        this.sqlite.table("book").where('id',config.id).update({active:1});
         var list: any = await this.sqlite.table("book_nav").where({
             "book_id": book.id,
         }).field('id,title,url as link').select();
@@ -80,19 +80,18 @@ export class Books {
                 link: config.url,
                 name: config.name,
             });
-            this.addBooksNav(config.name, list);
+            this.addBooksNav(config.title, list);
         }
         return Promise.resolve(list);
     }
 
-    async addBooksNav(name: string, data: any) {
-        var book: any = await this.sqlite.table('book').where('title', name).find();
-        this.sqlite.table("book_nav").where('book_id', book.id).delete();
+    async addBooksNav(config:any, data: any) {
+        this.sqlite.table("book_nav").where('book_id', config.id).delete();
         data.forEach(async (item: any) => {
             this.sqlite.table("book_nav").create({
                 title: item.title,
                 url: item.link,
-                book_id: book.id,
+                book_id: config.id,
                 read:0,
                 content: ""
             });

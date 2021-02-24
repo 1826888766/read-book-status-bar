@@ -51,6 +51,7 @@ export class Log2 {
     private _importIcon!: vscode.StatusBarItem;
     statusBar!: vscode.StatusBarItem;
     playBar!: vscode.StatusBarItem;
+    webViewPanel: null|vscode.WebviewPanel = null;
 
     constructor() {
         this.registerCommands();
@@ -206,7 +207,11 @@ export class Log2 {
         Tools.getInstance().on("onDidChangeSelection", (res: vscode.QuickPickItem[]) => {
             if (res[0]) {
                 if (!this.selectCatalog) {
-                    this.active = res[0];
+                    this.active = {
+                        title:res[0].label,
+                        url:res[0].detail,
+                        type:this.config.type
+                    };
                     this.navIndex = 0;
                     this.navPage.cur = 0;
                     this.catalogList = [];
@@ -537,6 +542,15 @@ export class Log2 {
         vscode.commands.registerCommand("read-book-status-bar.pre", () => this.prePage());
         // 下一行
         vscode.commands.registerCommand("read-book-status-bar.next", () => this.nextPage());
+        // 在浏览器中打开
+        vscode.commands.registerCommand("read-book-status-bar.webview", (e:any) =>{
+            this.webViewPanel =this.webViewPanel||  vscode.window.createWebviewPanel("read-book-status-bar",e.label,vscode.ViewColumn.Two,{
+                enableScripts:true,
+                retainContextWhenHidden:false,
+                
+            });
+            this.webViewPanel.webview.html = `<html><head><style>iframe{position:absolute;border: none;width: 100%;height: 100%}::-webkit-scrollbar{display: none;}</style></head><body><iframe width="100%" height="100%" src="${e.element.url}" border="0"></iframe></body></html>`;
+        });
         // 导入
         vscode.commands.registerCommand("read-book-status-bar.import", () => {
             var res = vscode.window.showOpenDialog({
