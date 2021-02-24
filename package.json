@@ -9,7 +9,7 @@
 		"小说"
 	],
 	"icon": "logo.png",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -27,6 +27,7 @@
 		"onCommand:read-book-status-bar.down",
 		"onCommand:read-book-status-bar.bosskey",
 		"onCommand:read-book-status-bar.import",
+		"onCommand:read-book-status-bar.start",
 		"onCommand:read-book-status-bar.stop"
 	],
 	"contributes": {

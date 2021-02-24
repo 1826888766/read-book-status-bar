@@ -151,9 +151,11 @@ export class Log2 {
             };
             if (this.isStop) {
                 this.playBar.text = "$(debug-start)";
+                this.playBar.command = "read-book-status-bar.start";
                 this.playBar.tooltip = "开始";
             } else {
                 this.playBar.text = "$(debug-pause)";
+                this.playBar.command = "read-book-status-bar.stop";
                 this.playBar.tooltip = "停止";
             }
             this.config.autoRead && this.read(true);
@@ -382,6 +384,9 @@ export class Log2 {
             clearTimeout(this.timeout);
             this.pageIndex++;
         }
+        this.playBar.text = "$(debug-stop)";
+        this.playBar.command = "read-book-status-bar.stop";
+        this.playBar.tooltip = "停止";
         if (!auto && text === undefined) {
             vscode.window.showErrorMessage("无章节内容，请先点击开始、或下一章");
             return false;
@@ -542,6 +547,10 @@ export class Log2 {
         vscode.commands.registerCommand("read-book-status-bar.pre", () => this.prePage());
         // 下一行
         vscode.commands.registerCommand("read-book-status-bar.next", () => this.nextPage());
+        // 停止
+        vscode.commands.registerCommand("read-book-status-bar.stop", () => this.stop());
+        // 停止
+        vscode.commands.registerCommand("read-book-status-bar.start", () => this.start());
         // 在浏览器中打开
         vscode.commands.registerCommand("read-book-status-bar.webview", (e:any) =>{
             this.webViewPanel =this.webViewPanel||  vscode.window.createWebviewPanel("read-book-status-bar",e.label,vscode.ViewColumn.Two,{
@@ -603,6 +612,11 @@ export class Log2 {
     stop() {
         this.isStop = true;
         clearTimeout(this.timeout);
+    }
+
+    start(){
+        this.isStop = false;
+        this.inteval();
     }
     /**
      * 老板键
