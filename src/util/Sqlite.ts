@@ -1,8 +1,9 @@
 const sqlite = require("sqlite3");
 const path = require("path");
+import  * as vscode from "vscode";
 export class Sqlite {
     
-    private filename = "bookshelf2.db";
+    private filename = "bookshelf3.db";
     public db: any;
     private whereOpt: any = [];
     private fieldOpt: any = [];
@@ -20,7 +21,10 @@ export class Sqlite {
                 this.db.run("CREATE TABLE book(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,type TEXT,url TEXT,nav_id int,nav_index INT,active INT);");
                 // id 书籍id 链接地址 阅读状态 章节内容
                 this.db.run("CREATE TABLE book_nav(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INT,url TEXT, title TEXT,read INT,content TEXT);");
+                var panel = vscode.window.createWebviewPanel("welcome","状态栏更新",vscode.ViewColumn.Active);
+                panel.webview.asWebviewUri = "<h1>version : 1.0.0</h1> <h2> 重写项目，优化可读性</h2><h2> 全新目录</h2><h2> 全新书架</h2><h2> 增加webview浏览</h2>";
             }
+            
         });
     }
     order(field:Array<string>|string,type:string = "asc") {
