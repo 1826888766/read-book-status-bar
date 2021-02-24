@@ -18,17 +18,26 @@ export class Books {
     }
 
     async addBooks(data: any) {
+        await this.sqlite.table("book").where('active',"1").update({active:0});
         var book: any = await this.sqlite.table('book').where('type', data.type).where('title', data.title).find();
         if(!book){
+            data['active'] = 1;
             this.sqlite.table("book").create(data);
+        }else{
+            await this.sqlite.table("book").where("id",book.id).update({active:1});
         }
+        return await this.sqlite.table('book').where('type', data.type).where('title', data.title).find();
+    }
+
+    async getActiveBook(){
+        return await this.sqlite.table('book').where('active', 1).find();
     }
 
     async getBook(name: any,config:any) {
        return await this.sqlite.table('book').where('type', config.type).where('title', name).find();
     }
     async activeCatalog(id: any) {
-        await this.sqlite.table("book_nav").where('id',id).update({read:0});
+        await this.sqlite.table("book_nav").where('id',id).update({read:1});
     }
     async activeBook(id:number){
         await this.sqlite.table("book").where('active',"1").update({active:0});
@@ -42,7 +51,7 @@ export class Books {
     async getNextPage(id:number,bookId:number){
         return await this.sqlite.table("book_nav").where("id",">",id).where("book_id",bookId).order("id","asc").find();
      }
-    async getContent(id:number,config:any){
+    async getContent(id:number,type:any){
         var content: any = await this.sqlite.table("book_nav").where({
             id:id,
         }).field('id,content,url').find();
@@ -50,7 +59,7 @@ export class Books {
             return false;
         }
         if(!content.content){
-            content = await request.setDirvers(config.type).read({
+            content = await request.setDirvers(type).read({
                 link: content.url,
             });
             this.setContent(id,content);
@@ -60,18 +69,18 @@ export class Books {
         return Promise.resolve(content);
     }
 
-    async getCatalogList(name: string, url: any, config: any) {
-        var book: any = await this.sqlite.table('book').where('type', config.type).where('title', name).find();
+    async getCatalogList(config:any) {
+        var book: any = await this.sqlite.table('book').where('type', config.type).where('title', config.title).find();
         this.sqlite.table("book").where('id',book.id).update({active:1});
         var list: any = await this.sqlite.table("book_nav").where({
             "book_id": book.id,
         }).field('id,title,url as link').select();
         if (!list.length) {
             list = await request.setConfig(config).list({
-                link: url,
-                name: name,
+                link: config.url,
+                name: config.name,
             });
-            this.addBooksNav(name, list);
+            this.addBooksNav(config.name, list);
         }
         return Promise.resolve(list);
     }

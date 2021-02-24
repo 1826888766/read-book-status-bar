@@ -33,7 +33,7 @@
 		"viewsWelcome": [
 			{
 				"view": "catalog",
-				"contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm)."
+				"contents": "获取书籍目录信息失败\n[重新获取](command:read-book-status-bar.refresh)\n[搜索其他书籍](command:read-book-status-bar.search)"
 			}
 		],
 		"views": {
@@ -66,8 +66,12 @@
 			"view/title": [
 				{
 					"command": "read-book-status-bar.refresh",
+					"group": "navigation"
+				},
+				{
+					"command": "read-book-status-bar.search",
 					"group": "navigation",
-					"when": "view == catalog"
+					"when": "view == books"
 				}
 			]
 		},
@@ -103,7 +107,11 @@
 		"commands": [
 			{
 				"command": "read-book-status-bar.search",
-				"title": "状态栏读书：搜索"
+				"title": "状态栏读书：搜索",
+				"icon": {
+					"light": "./icon/search-light.svg",
+					"dark": "./icon/search-dark.svg"
+				}
 			},
 			{
 				"command": "read-book-status-bar.refresh",

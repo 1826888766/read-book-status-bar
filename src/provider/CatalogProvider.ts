@@ -11,22 +11,19 @@ export class CatalogProvider implements vscode.TreeDataProvider<Dependency> {
 
 	
     private books:any = [];
-    constructor(private name:string){
+    constructor(private id:any){
         this.sqlite = new Sqlite();
         this.getCatalog();
     }
 
-	setName(name:string){
-		this.name = name;
+	setName(id:string){
+		this.id = id;
         this.getCatalog();
 	}
 
     async getCatalog(){
-		if (!this.name) {return [];}
-		var book: any = await this.sqlite.table('book').where('title', this.name).find();
-		if (book) {
-			this.books = await this.sqlite.table('book_nav').where('book_id', book.id).select();
-		}
+		if (!this.id) {return [];}
+		this.books = await this.sqlite.table('book_nav').where('book_id', this.id).select();
         this.refresh();
     }
 	refresh(): void {
