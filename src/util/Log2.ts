@@ -65,30 +65,7 @@ export class Log2 {
      * @param config 
      */
     public setConfig(config: vscode.WorkspaceConfiguration) {
-        if (this.config && this.config.type !== config.type) {
-            this.config = config;
-            if (this.config.type === 'file') {
-                this._importIcon.show();
-            }else{
-                this._importIcon.hide();
-            }
-            this.bookList = [];
-            this.catalogList = [];
-            this.navIndex = 0;
-            this.navPage = {
-                cur: 0,
-                limits: 10,
-            };
-            this.bookPage = {
-                cur: 0,
-                limits: 10,
-            };
-            this.search(this.config.name);
-
-        } else {
-            this.config = config;
-
-        }
+        
     }
 
     /**
@@ -100,10 +77,6 @@ export class Log2 {
         this._importIcon.text = "$(add)";
         this._importIcon.tooltip = "导入";
         this._importIcon.show();
-
-        if (this.config.type !== 'file') {
-            this._importIcon.hide();
-        }
         this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         this.statusBar.command = "read-book-status-bar.list";
         this.statusBar.text = "$(book)";
@@ -525,9 +498,11 @@ export class Log2 {
 
     import(file:string){
         this.selectCatalog = true;
-        this.updateConfig('name',  path.basename(file));
-        this.updateConfig('link', file);
-        this.updateConfig('navIndex',0);
+        this.active = {
+            title:path.basename(file),
+            type:"file",
+            url:file
+        };
         this.list();
     }
 
@@ -605,6 +580,7 @@ export class Log2 {
         vscode.workspace.onDidChangeConfiguration((e: any) => {
             this.config = vscode.workspace.getConfiguration("read-book-status-bar");
             this.bookProvider.getBooks();
+            this.setConfig(this.config);
         });
     }
 

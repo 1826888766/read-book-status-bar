@@ -5,11 +5,13 @@
 	"keywords": [
 		"read",
 		"book",
+		"看书",
 		"阅读",
+		"摸鱼",
 		"小说"
 	],
 	"icon": "logo.png",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"publisher": "read-book",
 	"engines": {
 		"vscode": "^1.50.0"

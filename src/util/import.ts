@@ -16,21 +16,18 @@ export class Import {
     }
 
     read(file: string) {
-        return new Promise((resolve,reject)=>{
-            if(!file) {
-                reject();
-                return false;
-            }
-            var platform = os.platform();
-            if (platform.search("win") !== false) {
-                file = file.replace('\/', '');
-            }
-            var data = fs.readFileSync(file);
-            var string =data.toString();
-            this.praseNav(string);
-            this.praseContent(string);
-            resolve(this);
-        });
+        if(!file) {
+            return false;
+        }
+        var platform = os.platform();
+        if (platform.search("win") !== false) {
+            file = file.replace('\/', '');
+        }
+        var data = fs.readFileSync(file);
+        var string =data.toString();
+        this.praseNav(string);
+        this.praseContent(string);
+        return this;
     }
 
     praseNav(text: string) {

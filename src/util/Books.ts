@@ -70,15 +70,15 @@ export class Books {
     }
 
     async getCatalogList(config:any) {
-        var book: any = await this.sqlite.table('book').where('type', config.type).where('title', config.title).find();
         this.sqlite.table("book").where('id',config.id).update({active:1});
         var list: any = await this.sqlite.table("book_nav").where({
-            "book_id": book.id,
+            "book_id": config.id,
         }).field('id,title,url as link').select();
         if (!list.length) {
             list = await request.setConfig(config).list({
                 link: config.url,
-                name: config.name,
+                name: config.title,
+                id:config.id
             });
             this.addBooksNav(config, list);
         }

@@ -15,15 +15,13 @@ class File implements Dirvers {
     this.sqlite = new Sqlite();
   }
   async list(item: any, config: any) {
-    this.name = path.basename(item.link);
-    var book: any = await this.sqlite.table('book').where('title', this.name).find();
-    if (book) {
-      var navList:any = await this.sqlite.table('book_nav').where('book_id', book.id).field('title,id as link').select();
+    this.name =item.title;
+    var navList:any = await this.sqlite.table('book_nav').where('book_id', item.id).select();
+    if (navList.length) {
       return navList;
     }
     this._import = new Import({ rule: config.rule });
-    await this._import.read(item.link);
-    this.save(item);
+    this._import = this._import.read(item.link);
     return this._import.navList;
   }
 
@@ -40,15 +38,7 @@ class File implements Dirvers {
     return [];
   }
 
-  async save(item: any) {
-    this._import.navList;
-    await this.sqlite.table('book').create({
-      title: this.name,
-      url: item.link,
-      type: 'file',
-      nav_index: 0
-    });
-    var book: any = await this.sqlite.table('book').where('title', this.name).find();
+  async save(book: any) {
     this._import.navList.forEach((item: any, index: any) => {
       this.sqlite.table('book_nav').create({
         title: item.title,
