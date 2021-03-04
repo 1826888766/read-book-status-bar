@@ -249,7 +249,7 @@
 				},
 				"read-book-status-bar.rule": {
 					"type": "string",
-					"default": "\\s{1}第.{1,7}(章|节|集|卷|部|篇).{0,}",
+					"default": "(\\s|\\n)(第)([\\u4e00-\\u9fa5a-zA-Z0-9]{1,7})[章][^\\n]{1,35}(|\\n)",
 					"description": "文件驱动断章正则"
 				}
 			}

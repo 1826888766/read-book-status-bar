@@ -61,6 +61,7 @@ export class Books {
         if(!content.content){
             content = await request.setDirvers(type).read({
                 link: content.url,
+                id:id
             });
             this.setContent(id,content);
         }else{
@@ -88,12 +89,12 @@ export class Books {
     async addBooksNav(config:any, data: any) {
         this.sqlite.table("book_nav").where('book_id', config.id).delete();
         data.forEach(async (item: any) => {
-            this.sqlite.table("book_nav").create({
+            await this.sqlite.table("book_nav").create({
                 title: item.title,
                 url: item.link,
                 book_id: config.id,
                 read:0,
-                content: ""
+                content: item.content||""
             });
         });
     }

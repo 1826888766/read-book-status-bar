@@ -279,12 +279,14 @@ export class Log2 {
         if (!isInit) {
             this.isStop = false;
         }
+        this.pageIndex = 0;
         Print.getInstance().write("正在获取章节内容");
         this.selectCatalog = true;
         let res = await Books.getInstance().getContent(this.activeCatalog.id, this.active.type);
         await Books.getInstance().activeCatalog(this.activeCatalog.id);
         this.catalogProvider.setName(this.active.id);
         this.setContext(res);
+        
         this.inteval();
     }
 
@@ -351,6 +353,7 @@ export class Log2 {
     * 间隔执行输出
     */
     private inteval() {
+        clearTimeout(this.timeout);
         var text = this.getContext();
         let auto = this.config.autoReadRow;
         if (auto) {

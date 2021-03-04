@@ -3,7 +3,7 @@ import { Dirvers } from "../interface/dirvers";
 import { Import } from "../util/import";
 import { Sqlite } from "../util/Sqlite";
 const path = require("path");
-
+import {workspace} from "vscode"
 class File implements Dirvers {
   _list: any;
   navlist: any;
@@ -26,12 +26,15 @@ class File implements Dirvers {
   }
 
   async read(item: any) {
-    var book: any = await this.sqlite.table('book').where('title', this.name).find();
+    var config = workspace.getConfiguration();
+    var nav: any = await this.sqlite.table('book_nav').where('id', item.id).find();
+    var book: any = await this.sqlite.table('book').where('id', nav.book_id).find();
     if (book) {
-      book = await this.sqlite.table('book_nav').field(['content']).where('id', item.link).find();
-      return book.content;
+      this._import = new Import({ rule: config.rule });
+      this._import = this._import.read(book.url);
+      return this._import.navList[nav.url].content;
     }
-    return this._import.content[item.link];
+    return "获取文章失败";
   }
 
   async search(name: string) {

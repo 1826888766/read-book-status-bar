@@ -4,10 +4,12 @@ import  * as vscode from "vscode";
 export class Sqlite {
     
     private filename = "bookshelf4.db";
+
     public db: any;
     private whereOpt: any = [];
     private fieldOpt: any = [];
     private orderOpt: any = [];
+    private serialize:Boolean = false;
     private tableOpt: string = "";
     constructor() {
         this.db = new sqlite.Database(this.filename, function (e: any) {
@@ -35,7 +37,18 @@ export class Sqlite {
         this.orderOpt.push(`${field} ${type}`);
         return this;
     }
+
+
+
+
+
+    startSerialize(){
+        this.serialize = true;
+    }
+
+
     async run(sql: string) {
+       
        return new Promise((resolve)=>{
         this.db.run(sql, function (e: any) {
             if (e) {
@@ -63,6 +76,25 @@ export class Sqlite {
             } else {
                 value.push(`"${item}"`);
             }
+        });
+
+        var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value})`;
+        return await this.run(sql);
+    }
+
+    async createPipe(data: any) {
+        var field = Object.keys(data);
+        var value: any = [];
+       
+        data.forEach((item:any) => {
+            Object.values(data).forEach((item) => {
+                if (typeof item === "number") {
+                    value.push(`${item}`);
+                } else {
+                    value.push(`"${item}"`);
+                }
+            });
+            
         });
 
         var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value})`;
