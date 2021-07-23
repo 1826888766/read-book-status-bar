@@ -23,8 +23,6 @@ export class Sqlite {
                 this.db.run("CREATE TABLE book(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,type TEXT,url TEXT,nav_id int,nav_index INT,active INT);");
                 // id 书籍id 链接地址 阅读状态 章节内容
                 this.db.run("CREATE TABLE book_nav(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INT,url TEXT, title TEXT,read INT,content TEXT);");
-                var panel = vscode.window.createWebviewPanel("welcome","状态栏更新",vscode.ViewColumn.Active);
-                panel.webview.html = "<h1>version : 1.0.0</h1> <h2> 重写项目，优化可读性</h2><h2> 全新目录</h2><h2> 全新书架</h2><h2> 增加webview浏览</h2>";
             }
             
         });
@@ -52,8 +50,7 @@ export class Sqlite {
        return new Promise((resolve)=>{
         this.db.run(sql, function (e: any) {
             if (e) {
-                console.log(e);
-                throw Error(e);
+                console.log(sql);
             }
             resolve(1);
         });
@@ -74,11 +71,16 @@ export class Sqlite {
             if (typeof item === "number") {
                 value.push(`${item}`);
             } else {
-                value.push(`"${item}"`);
+                if(typeof item === "string"){
+                    item = item.replace(/\'/g,"\"");
+                    value.push(`\'${item}\'`);
+                }else{
+                    value.push(`\'${item}\'`);
+                }
             }
         });
 
-        var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value})`;
+        var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value});`;
         return await this.run(sql);
     }
 
@@ -91,13 +93,16 @@ export class Sqlite {
                 if (typeof item === "number") {
                     value.push(`${item}`);
                 } else {
-                    value.push(`"${item}"`);
+                    if(typeof item === "string"){
+                        item = item.replace("\'","\"");
+                        value.push(`\'${item}\'`);
+                    }
                 }
             });
             
         });
 
-        var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value})`;
+        var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value});`;
         return await this.run(sql);
     }
 
@@ -109,10 +114,16 @@ export class Sqlite {
         var where = this.whereOpt.join(" AND ");
         var dataArr = [];
         for(var key in data){
-            dataArr.push(`${key} =  "${data[key]}"`);
+            if(typeof data[key] ==="string"){
+                var value = data[key].replace("\'","\"");
+                dataArr.push(`${key} =  \'${value}\'`);
+            }else{
+                var value = data[key];
+                dataArr.push(`${key} =  \'${value}\'`);
+            }
         }
         var dataStr = dataArr.join(",");
-        var sql = `UPDATE ${this.tableOpt} SET  ${dataStr}  WHERE ${where}`;
+        var sql = `UPDATE ${this.tableOpt} SET  ${dataStr}  WHERE ${where};`;
         return this.run(sql);
     }
     public field(name: any) {
@@ -130,7 +141,7 @@ export class Sqlite {
                 if (typeof field[key] === "number") {
                     this.whereOpt.push(`${key} = ${field[key]}`);
                 } else {
-                    this.whereOpt.push(`${key} = "${field[key]}"`);
+                    this.whereOpt.push(`${key} = \`${field[key]}\``);
                 }
             }
             return this;
