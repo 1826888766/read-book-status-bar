@@ -2,8 +2,7 @@
 import { Dirvers } from "../interface/dirvers";
 import { Import } from "../util/import";
 import { Sqlite } from "../util/Sqlite";
-const path = require("path");
-import {workspace} from "vscode"
+import {workspace} from "vscode";
 class File implements Dirvers {
   _list: any;
   navlist: any;

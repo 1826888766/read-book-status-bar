@@ -266,6 +266,7 @@ export class Log2 {
         this.catalogProvider.setName(this.active.id);
         showQuick&& this.showCatalogQuickPick();
         Tools.getInstance().hideBusy();
+        this.write("获取目录完成，您可以开始阅读了...");
     }
 
     /**
