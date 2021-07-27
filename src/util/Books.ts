@@ -45,11 +45,13 @@ export class Books {
     }
 
     async getPrePage(id:number,bookId:number){
-       return await this.sqlite.table("book_nav").where("id",">",id).where("book_id",bookId).order("id","desc").find();
+        let book:any = await this.sqlite.table("book_nav").where("id",id).field('sort').find();
+       return await this.sqlite.table("book_nav").where("sort","<",book.sort).where("book_id",bookId).order("sort","asc").find();
     }
 
     async getNextPage(id:number,bookId:number){
-        return await this.sqlite.table("book_nav").where("id",">",id).where("book_id",bookId).order("id","asc").find();
+        let book:any = await this.sqlite.table("book_nav").where("id",id).field('sort').find();
+        return await this.sqlite.table("book_nav").where("sort",">",book.sort).where("book_id",bookId).order("sort","asc").find();
      }
     async getContent(id:number,type:any){
         var content: any = await this.sqlite.table("book_nav").where({
@@ -79,7 +81,7 @@ export class Books {
             list = await request.setConfig(config).list({
                 link: config.url,
                 name: config.title,
-                id:config.id
+                id:config.id,
             });
             this.addBooksNav(config, list);
         }
@@ -88,12 +90,13 @@ export class Books {
 
     async addBooksNav(config:any, data: any) {
         this.sqlite.table("book_nav").where('book_id', config.id).delete();
-        data.forEach(async (item: any) => {
+        data.forEach(async (item: any,index:number) => {
             await this.sqlite.table("book_nav").create({
                 title: item.title,
                 url: item.link,
                 book_id: config.id,
                 read:0,
+                sort:index,
                 content: item.content||""
             });
         });

@@ -22,7 +22,16 @@ export class Sqlite {
                 // id 名称 类型 链接地址 当前阅读章节 章节索引
                 this.db.run("CREATE TABLE book(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,type TEXT,url TEXT,nav_id int,nav_index INT,active INT);");
                 // id 书籍id 链接地址 阅读状态 章节内容
-                this.db.run("CREATE TABLE book_nav(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INT,url TEXT, title TEXT,read INT,content TEXT);");
+                this.db.run("CREATE TABLE book_nav(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INT,sort INT,url TEXT, title TEXT,read INT,content TEXT);");
+            }else{
+                this.db.get("select sort from book_nav limit 0,1",(e:any)=>{
+                    if(e){
+                         console.log(e);
+                        this.db.run("ALTER TABLE book_nav ADD sort INT DEFAULT(0);").then((err:any)=>{
+                            console.log(err);
+                        });
+                    }
+                });
             }
             
         });
@@ -81,6 +90,7 @@ export class Sqlite {
         });
 
         var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value});`;
+        console.log(sql);
         return await this.run(sql);
     }
 
@@ -103,6 +113,8 @@ export class Sqlite {
         });
 
         var sql = `INSERT INTO ${this.tableOpt}(${field}) VALUEs(${value});`;
+        console.log(sql);
+
         return await this.run(sql);
     }
 
@@ -190,10 +202,11 @@ export class Sqlite {
                 sql += ` WHERE ${where}`;
             }
             if (this.orderOpt.length){
-                sql += " ORDER "+ this.orderOpt.join(",");
+                sql += " ORDER BY "+ this.orderOpt.join(",");
             }
             this.db.all(sql, function (err: any, row: any) {
                 if (err) {
+                    console.log(sql);
                     reject(err);
                 } else {
                     resolve(row);

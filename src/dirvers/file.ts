@@ -15,7 +15,7 @@ class File implements Dirvers {
   }
   async list(item: any, config: any) {
     this.name =item.title;
-    var navList:any = await this.sqlite.table('book_nav').where('book_id', item.id).select();
+    var navList:any = await this.sqlite.table('book_nav').where('book_id', item.id).order('sort','asc').select();
     if (navList.length) {
       return navList;
     }
@@ -42,10 +42,12 @@ class File implements Dirvers {
 
   async save(book: any) {
     this._import.navList.forEach((item: any, index: any) => {
+      console.log(index);
       this.sqlite.table('book_nav').create({
         title: item.title,
         url: item.link,
         book_id: book.id,
+        sort:index,
         content: this._import.content[index]
       });
     });
