@@ -13,7 +13,7 @@ export class Tools{
     }
 
     private listen(){
-        this.quickPick.onDidChangeSelection((res: QuickPickItem[])=>this.call("onDidChangeSelection",res));
+        // this.quickPick.onDidChangeSelection((res: QuickPickItem[])=>this.call("onDidChangeSelection",res));
         this.quickPick.onDidChangeValue((e: string) => this.call("onDidChangeValue",e));
         this.quickPick.onDidTriggerButton((e: QuickInputButton) =>this.call("onDidTriggerButton",e));
     }

@@ -2,13 +2,14 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
-import { Log2 } from "./util/Log2";
+import App from "./App";
+import { Config } from "./Config";
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  let log = new Log2();
-  context.subscriptions.push(log);
-  log.run();
+  Config.getInstance().context = context;
+  let app = new App();
+  context.subscriptions.push(app);
 }
 
 // this method is called when your extension is deactivated
