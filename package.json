@@ -1,298 +1,293 @@
 {
-	"name": "read-book-status-bar",
-	"displayName": "状态栏读书",
-	"description": "状态栏读书,浑水摸鱼",
-	"keywords": [
-		"read",
-		"book",
-		"看书",
-		"阅读",
-		"摸鱼",
-		"小说"
-	],
-	"icon": "logo.png",
-	"version": "2.0.0",
-	"publisher": "read-book",
-	"engines": {
-		"vscode": "^1.50.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onStartupFinished",
-		"onCommand:read-book-status-bar.search",
-		"onCommand:read-book-status-bar.list",
-		"onCommand:read-book-status-bar.pre",
-		"onCommand:read-book-status-bar.next",
-		"onCommand:read-book-status-bar.up",
-		"onCommand:read-book-status-bar.down",
-		"onCommand:read-book-status-bar.bosskey",
-		"onCommand:read-book-status-bar.import",
-		"onCommand:read-book-status-bar.start",
-		"onCommand:read-book-status-bar.stop"
-	],
-	"contributes": {
-		"viewsWelcome": [
-			{
-				"view": "catalog",
-				"contents": "获取书籍目录信息失败\n[重新获取](command:read-book-status-bar.refresh)\n[搜索其他书籍](command:read-book-status-bar.search)"
-			}
-		],
-		"views": {
-			"read-book-status-bar": [
-				{
-					"id": "catalog",
-					"name": "目录",
-					"icon": "book.svg",
-					"contextualTitle": "catalog"
-				},
-				{
-					"id": "books",
-					"name": "书架"
-				}
-			]
-		},
-		"menus": {
-			"view/item/context": [
-				{
-					"command": "read-book-status-bar.select-catalog",
-					"group": "inline",
-					"when": "view == catalog"
-				},
-				{
-					"command": "read-book-status-bar.select-book",
-					"group": "inline",
-					"when": "view == books"
-				},
-				{
-					"command": "read-book-status-bar.webview",
-					"group": "navigation"
-				}
-			],
-			"view/title": [
-				{
-					"command": "read-book-status-bar.refresh",
-					"group": "navigation"
-				},
-				{
-					"command": "read-book-status-bar.search",
-					"group": "navigation",
-					"when": "view == books"
-				}
-			]
-		},
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "read-book-status-bar",
-					"title": "状态栏读书",
-					"icon": "book.svg"
-				}
-			]
-		},
-		"keybindings": [
-			{
-				"command": "read-book-status-bar.up",
-				"key": "ctrl+alt+w",
-				"mac": "cmd+alt+w",
-				"when": "isLinux || isWindows || isMac"
-			},
-			{
-				"command": "read-book-status-bar.down",
-				"key": "ctrl+alt+s",
-				"mac": "cmd+alt+s",
-				"when": "isLinux || isWindows || isMac"
-			},
-			{
-				"command": "read-book-status-bar.bosskey",
-				"key": "ctrl+alt+b",
-				"mac": "ctrl+alt+b",
-				"when": "isLinux || isWindows || isMac"
-			}
-		],
-		"commands": [
-			{
-				"command": "read-book-status-bar.search",
-				"title": "状态栏读书：搜索",
-				"icon": {
-					"light": "./icon/search-light.svg",
-					"dark": "./icon/search-dark.svg"
-				}
-			},
-			{
-				"command": "read-book-status-bar.refresh",
-				"title": "重新拉取目录",
-				"icon": {
-					"light": "./icon/refresh-light.svg",
-					"dark": "./icon/refresh-dark.svg"
-				}
-			},
-			{
-				"command": "read-book-status-bar.select-catalog",
-				"title": "阅读",
-				"icon": {
-					"light": "./icon/read-light.svg",
-					"dark": "./icon/read-dark.svg"
-				}
-			},
-			{
-				"command": "read-book-status-bar.select-book",
-				"title": "阅读",
-				"icon": {
-					"light": "./icon/read-light.svg",
-					"dark": "./icon/read-dark.svg"
-				}
-			},
-			{
-				"command": "read-book-status-bar.list",
-				"title": "状态栏读书：目录"
-			},
-			{
-				"command": "read-book-status-bar.pre",
-				"title": "状态栏读书：上一章"
-			},
-			{
-				"command": "read-book-status-bar.next",
-				"title": "状态栏读书：下一章"
-			},
-			{
-				"command": "read-book-status-bar.up",
-				"title": "状态栏读书：上一行"
-			},
-			{
-				"command": "read-book-status-bar.down",
-				"title": "状态栏读书：下一行"
-			},
-			{
-				"command": "read-book-status-bar.stop",
-				"title": "状态栏读书：停止"
-			},
-			{
-				"command": "read-book-status-bar.bosskey",
-				"title": "状态栏读书：老板键"
-			},
-			{
-				"command": "read-book-status-bar.import",
-				"title": "状态栏读书：导入"
-			},
-			{
-				"command": "read-book-status-bar.webview",
-				"title": "在浏览器中打开"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "状态栏读书",
-			"properties": {
-				"read-book-status-bar.autoRead": {
-					"type": "boolean",
-					"default": false,
-					"description": "启动时自动阅读上次记录"
-				},
-				"read-book-status-bar.autoReadRow": {
-					"type": "boolean",
-					"default": true,
-					"description": "是否自动阅读下一行"
-				},
-				"read-book-status-bar.navIndex": {
-					"type": "number",
-					"default": 0,
-					"description": "阅读到第几章"
-				},
-				"read-book-status-bar.pageIndex": {
-					"type": "number",
-					"default": 0,
-					"description": "阅读到第几行"
-				},
-				"read-book-status-bar.type": {
-					"type": "string",
-					"enum": [
-						"file",
-						"biquge",
-						"qidian",
-						"zongheng"
-					],
-					"default": "biquge",
-					"enumDescriptions": [
-						"本地文件[txt]",
-						"笔趣阁",
-						"起点中文网",
-						"纵横中文网"
-					],
-					"description": "阅读平台"
-				},
-				"read-book-status-bar.speed": {
-					"type": "number",
-					"default": 5000,
-					"description": "自动阅读速度默认5s"
-				},
-				"read-book-status-bar.name": {
-					"type": "string",
-					"default": "",
-					"description": "当前阅读书籍名称"
-				},
-				"read-book-status-bar.link": {
-					"type": "string",
-					"default": "",
-					"description": "当前阅读书籍url"
-				},
-				"read-book-status-bar.bosstext": {
-					"type": "string",
-					"default": "",
-					"description": "老板键显示文字"
-				},
-				"read-book-status-bar.rowLength": {
-					"type": "number",
-					"default": 40,
-					"description": "每行最多显示字数默认40，必须大于20,否则阅读时间会自动减半"
-				},
-				"read-book-status-bar.rule": {
-					"type": "string",
-					"default": "(\\s|\\n)(第)([\\u4e00-\\u9fa5a-zA-Z0-9]{1,7})[章][^\\n]{1,35}(|\\n)",
-					"description": "文件驱动断章正则"
-				}
-			}
-		}
-	},
-	"main": "./out/extension.js",
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.1.0",
-		"@types/node": "14.x",
-		"@types/vscode": "^1.65.0",
-		"@typescript-eslint/eslint-plugin": "^5.12.1",
-		"@typescript-eslint/parser": "^5.12.1",
-		"@vscode/test-electron": "^2.1.2",
-		"eslint": "^8.9.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.2.1",
-		"typescript": "^4.5.5"
-	},
-	"dependencies": {
-		"axios": "^0.26.0",
-		"cheerio": "^1.0.0-rc.10",
-		"iconv-lite": "^0.6.3",
-		"sqlite3": "^5.0.2"
-	},
-	"bugs": {
-		"url": "https://github.com/1826888766/read-book-status-bar/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/1826888766/read-book-status-bar"
-	},
-	"homepage": "https://github.com/1826888766/read-book-status-bar/blob/mian/README.md",
-	"galleryBanner": {
-		"color": "#333333",
-		"theme": "dark"
-	}
+  "name": "read-book-status-bar",
+  "displayName": "状态栏读书",
+  "description": "状态栏读书,浑水摸鱼",
+  "keywords": [
+    "read",
+    "book",
+    "看书",
+    "阅读",
+    "摸鱼",
+    "小说"
+  ],
+  "icon": "logo.png",
+  "version": "2.0.0",
+  "publisher": "read-book",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "content",
+        "contents": "获取书籍目录信息失败\n[重新获取](command:read-book-status-bar.refresh)\n[搜索其他书籍](command:read-book-status-bar.search)"
+      }
+    ],
+    "views": {
+      "read-book-status-bar": [
+        {
+          "id": "content",
+          "name": "目录",
+          "icon": "book.svg",
+          "contextualTitle": "content"
+        },
+        {
+          "id": "books",
+          "name": "书架"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "read-book-status-bar.read",
+          "group": "inline",
+          "when": "view == content"
+        },
+        {
+          "command": "read-book-status-bar.select-book",
+          "group": "inline",
+          "when": "view == books"
+        },
+        {
+          "command": "read-book-status-bar.webview",
+          "group": "inline"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "read-book-status-bar.refresh",
+          "group": "navigation"
+        },
+        {
+          "command": "read-book-status-bar.search",
+          "group": "navigation",
+          "when": "view == books"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "read-book-status-bar",
+          "title": "状态栏读书",
+          "icon": "book.svg"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "read-book-status-bar.up",
+        "key": "ctrl+alt+w",
+        "mac": "cmd+alt+w",
+        "when": "isLinux || isWindows || isMac"
+      },
+      {
+        "command": "read-book-status-bar.down",
+        "key": "ctrl+alt+s",
+        "mac": "cmd+alt+s",
+        "when": "isLinux || isWindows || isMac"
+      },
+      {
+        "command": "read-book-status-bar.bosskey",
+        "key": "ctrl+alt+b",
+        "mac": "ctrl+alt+b",
+        "when": "isLinux || isWindows || isMac"
+      }
+    ],
+    "commands": [
+      {
+        "command": "read-book-status-bar.search",
+        "title": "状态栏读书：搜索",
+        "icon": {
+          "light": "./icon/search-light.svg",
+          "dark": "./icon/search-dark.svg"
+        }
+      },
+      {
+        "command": "read-book-status-bar.refresh",
+        "title": "重新拉取目录",
+        "icon": {
+          "light": "./icon/refresh-light.svg",
+          "dark": "./icon/refresh-dark.svg"
+        }
+      },
+      {
+        "command": "read-book-status-bar.read",
+        "title": "状态栏阅读",
+        "icon": {
+          "light": "./icon/read-light.svg",
+          "dark": "./icon/read-dark.svg"
+        }
+      },
+      {
+        "command": "read-book-status-bar.select-book",
+        "title": "阅读",
+        "icon": {
+          "light": "./icon/read-light.svg",
+          "dark": "./icon/read-dark.svg"
+        }
+      },
+      {
+        "command": "read-book-status-bar.list",
+        "title": "状态栏读书：目录"
+      },
+      {
+        "command": "read-book-status-bar.pre",
+        "title": "状态栏读书：上一章"
+      },
+      {
+        "command": "read-book-status-bar.next",
+        "title": "状态栏读书：下一章"
+      },
+      {
+        "command": "read-book-status-bar.up",
+        "title": "状态栏读书：上一行"
+      },
+      {
+        "command": "read-book-status-bar.down",
+        "title": "状态栏读书：下一行"
+      },
+      {
+        "command": "read-book-status-bar.stop",
+        "title": "状态栏读书：停止"
+      },
+      {
+        "command": "read-book-status-bar.bosskey",
+        "title": "状态栏读书：老板键"
+      },
+      {
+        "command": "read-book-status-bar.import",
+        "title": "状态栏读书：导入"
+      },
+      {
+        "command": "read-book-status-bar.webview",
+        "title": "编辑器内阅读",
+        "icon": {
+          "light": "./icon/window-light.svg",
+          "dark": "./icon/window-dark.svg"
+        }
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "状态栏读书",
+      "properties": {
+        "read-book-status-bar.autoRead": {
+          "type": "boolean",
+          "default": false,
+          "description": "启动时自动阅读上次记录"
+        },
+        "read-book-status-bar.autoReadRow": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否自动阅读下一行"
+        },
+        "read-book-status-bar.navIndex": {
+          "type": "number",
+          "default": 0,
+          "description": "阅读到第几章"
+        },
+        "read-book-status-bar.pageIndex": {
+          "type": "number",
+          "default": 0,
+          "description": "阅读到第几行"
+        },
+        "read-book-status-bar.type": {
+          "type": "string",
+          "enum": [
+            "file",
+            "biquge",
+            "qidian",
+            "zongheng"
+          ],
+          "default": "biquge",
+          "enumDescriptions": [
+            "本地文件[txt]",
+            "笔趣阁",
+            "起点中文网",
+            "纵横中文网"
+          ],
+          "description": "阅读平台"
+        },
+        "read-book-status-bar.speed": {
+          "type": "number",
+          "default": 5000,
+          "description": "自动阅读速度默认5s"
+        },
+        "read-book-status-bar.name": {
+          "type": "string",
+          "default": "",
+          "description": "当前阅读书籍名称"
+        },
+        "read-book-status-bar.link": {
+          "type": "string",
+          "default": "",
+          "description": "当前阅读书籍url"
+        },
+        "read-book-status-bar.bosstext": {
+          "type": "string",
+          "default": "",
+          "description": "老板键显示文字"
+        },
+        "read-book-status-bar.rowLength": {
+          "type": "number",
+          "default": 40,
+          "description": "每行最多显示字数默认40，必须大于20,否则阅读时间会自动减半"
+        },
+        "read-book-status-bar.rule": {
+          "type": "string",
+          "default": "(\\s|\\n)(第)([\\u4e00-\\u9fa5a-zA-Z0-9]{1,7})[章][^\\n]{1,35}(|\\n)",
+          "description": "文件驱动断章正则"
+        }
+      }
+    }
+  },
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.65.0",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "@vscode/test-electron": "^2.1.2",
+    "eslint": "^8.9.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.2.1",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "axios": "^0.26.0",
+    "cheerio": "^1.0.0-rc.10",
+    "iconv-lite": "^0.6.3",
+    "sqlite3": "^5.0.2",
+    "string-format": "^2.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/1826888766/read-book-status-bar/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1826888766/read-book-status-bar"
+  },
+  "homepage": "https://github.com/1826888766/read-book-status-bar/blob/mian/README.md",
+  "galleryBanner": {
+    "color": "#333333",
+    "theme": "dark"
+  }
 }

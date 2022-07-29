@@ -14,4 +14,4 @@ export default {
     warn(msg: string) {
         this.write('warn', msg);
     }
-}
+};
