@@ -4,6 +4,7 @@ import Request from "../https/request";
 import statusview from "../previews/statusview";
 import editcontent from "../previews/editcontent";
 import content, { ContentItem } from "../providers/content";
+import _import from "./import";
 const format = require("string-format")
 var handler: ReadBook, nextStatusBarItem, stopStatusBarItem: StatusBarItem, startStatusBarItem: StatusBarItem;
 
@@ -17,7 +18,7 @@ function next() {
     nextStatusBarItem.tooltip = '下一章';
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
-
+        index++;
     });
 }
 
@@ -58,6 +59,8 @@ function start() {
     commands.registerCommand(command, () => {
         stopStatusBarItem.show();
         startStatusBarItem.hide();
+
+
     });
 }
 
@@ -65,7 +68,8 @@ function start() {
 function nextLine() {
     let command = "read-book-status-bar.next-line";
     commands.registerCommand(command, () => {
-
+        index++;
+        run();
     });
 }
 
@@ -73,24 +77,48 @@ function nextLine() {
 function prevLine() {
     let command = "read-book-status-bar.prev-line";
     commands.registerCommand(command, () => {
-
-    });
-}
-let load_content = "";
-let load_contents: string[] = [];
-function read() {
-    let command = "read-book-status-bar.read";
-    commands.registerCommand(command, async (e: ContentItem) => {
-        load_content = await Request.getInstance(domain).content(e.element);
-        load_contents = load_content.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
+        index--;
         run();
     });
 }
+let loadContents: string[] = [];
+let view:any;
+function read() {
+    let command = "read-book-status-bar.read";
+    commands.registerCommand(command, async (e: ContentItem) => {
+        view = statusview;
+        console.log(e);
+        if (e.element.type === "file") {
+            loadContents = await _import.getContent(e.element);
+            run();
+        } else {
+            let loadContent = await Request.getInstance(domain).content(e.element);
+            loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
+            run();
+        }
+    });
+}
+function readEdit() {
+    let command = "read-book-status-bar.read-edit";
+    commands.registerCommand(command, async (e: ContentItem) => {
+        view = editcontent;
+        if (e.element.type === "file") {
+            loadContents = await _import.getContent(e.element);
+            run();
+        } else {
+            let loadContent = await Request.getInstance(domain).content(e.element);
+            loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
+            run();
+        }
+    });
+}
 let index = 0;
+let time:NodeJS.Timeout; 
 function run() {
-    editcontent.write(load_contents[index]);
-    setTimeout(() => {
-        if (index >= load_contents.length) {
+    clearTimeout(time);
+    view.write(loadContents[index]);
+    time = setTimeout(() => {
+        if (index >= loadContents.length) {
             commands.executeCommand('read-book-status-bar.next');
             return;
         }
@@ -140,6 +168,7 @@ function init() {
     prevLine();
     list();
     read();
+    readEdit();
 }
 
 export default {

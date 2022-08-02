@@ -56,7 +56,7 @@
           "when": "view == books"
         },
         {
-          "command": "read-book-status-bar.webview",
+          "command": "read-book-status-bar.read-edit",
           "group": "inline"
         }
       ],
@@ -167,7 +167,7 @@
         "title": "状态栏读书：导入"
       },
       {
-        "command": "read-book-status-bar.webview",
+        "command": "read-book-status-bar.read-edit",
         "title": "编辑器内阅读",
         "icon": {
           "light": "./icon/window-light.svg",
@@ -275,6 +275,7 @@
     "axios": "^0.26.0",
     "cheerio": "^1.0.0-rc.10",
     "iconv-lite": "^0.6.3",
+    "linebyline": "^1.3.0",
     "sqlite3": "^5.0.2",
     "string-format": "^2.0.0"
   },

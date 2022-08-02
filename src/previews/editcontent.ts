@@ -46,7 +46,7 @@ function reset() {
     register(msg);
 }
 
-var msg = "测试";
+var msg = "";
 export default {
     run(app: ReadBook) {
         handler = app;
