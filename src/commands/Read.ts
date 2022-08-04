@@ -5,9 +5,13 @@ import statusview from "../previews/statusview";
 import editcontent from "../previews/editcontent";
 import content, { ContentItem } from "../providers/content";
 import _import from "./import";
-const format = require("string-format")
+const format = require("string-format");
 var handler: ReadBook, nextStatusBarItem, stopStatusBarItem: StatusBarItem, startStatusBarItem: StatusBarItem;
 
+var navIndex: number = 0, contentIndex: number = 0;
+function getContents() {
+    return content.getItems();
+}
 var domain = require('../domain/biquge.json');
 function next() {
     let command = "read-book-status-bar.next";
@@ -18,7 +22,16 @@ function next() {
     nextStatusBarItem.tooltip = '下一章';
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
-        index++;
+        navIndex++;
+        if (view === editcontent) {
+            commands.executeCommand('read-book-status-bar.read-edit', {
+                element: getContents()[navIndex]
+            });
+        } else {
+            commands.executeCommand('read-book-status-bar.read', {
+                element: getContents()[navIndex]
+            });
+        }
     });
 }
 
@@ -31,7 +44,16 @@ function prev() {
     nextStatusBarItem.tooltip = '上一章';
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
-
+        navIndex--;
+        if (view === editcontent) {
+            commands.executeCommand('read-book-status-bar.read-edit', {
+                element: getContents()[navIndex]
+            });
+        } else {
+            commands.executeCommand('read-book-status-bar.read', {
+                element: getContents()[navIndex]
+            });
+        }
     });
 }
 function stop() {
@@ -44,6 +66,8 @@ function stop() {
     commands.registerCommand(command, () => {
         startStatusBarItem.show();
         stopStatusBarItem.hide();
+
+        clearTimeout(time);
     });
 }
 
@@ -59,8 +83,20 @@ function start() {
     commands.registerCommand(command, () => {
         stopStatusBarItem.show();
         startStatusBarItem.hide();
-
-
+        if (loadContents.length > 0) {
+            run();
+        } else {
+            if (view === editcontent) {
+                commands.executeCommand('read-book-status-bar.read-edit', {
+                    element: getContents()[navIndex]
+                });
+            } else {
+                view = statusview;
+                commands.executeCommand('read-book-status-bar.read', {
+                    element: getContents()[navIndex]
+                });
+            }
+        }
     });
 }
 
@@ -68,7 +104,7 @@ function start() {
 function nextLine() {
     let command = "read-book-status-bar.next-line";
     commands.registerCommand(command, () => {
-        index++;
+        contentIndex++;
         run();
     });
 }
@@ -77,17 +113,17 @@ function nextLine() {
 function prevLine() {
     let command = "read-book-status-bar.prev-line";
     commands.registerCommand(command, () => {
-        index--;
+        contentIndex--;
         run();
     });
 }
 let loadContents: string[] = [];
-let view:any;
+let view: any;
 function read() {
     let command = "read-book-status-bar.read";
     commands.registerCommand(command, async (e: ContentItem) => {
         view = statusview;
-        console.log(e);
+        contentIndex = 0;
         if (e.element.type === "file") {
             loadContents = await _import.getContent(e.element);
             run();
@@ -99,6 +135,7 @@ function read() {
     });
 }
 function readEdit() {
+    contentIndex = 0;
     let command = "read-book-status-bar.read-edit";
     commands.registerCommand(command, async (e: ContentItem) => {
         view = editcontent;
@@ -112,17 +149,16 @@ function readEdit() {
         }
     });
 }
-let index = 0;
-let time:NodeJS.Timeout; 
+let time: NodeJS.Timeout;
 function run() {
     clearTimeout(time);
-    view.write(loadContents[index]);
+    view.write(loadContents[contentIndex]);
     time = setTimeout(() => {
-        if (index >= loadContents.length) {
+        if (contentIndex >= loadContents.length) {
             commands.executeCommand('read-book-status-bar.next');
             return;
         }
-        index++;
+        contentIndex++;
         run();
     }, 5000);
 }

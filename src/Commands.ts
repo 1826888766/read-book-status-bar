@@ -2,6 +2,7 @@ import { ReadBook } from "./main";
 
 
 const commands: string[] = [
+    './storage/storage',  
     './commands/read',  
     './commands/import',  
     './commands/search',  

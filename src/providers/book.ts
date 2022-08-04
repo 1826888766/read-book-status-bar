@@ -1,20 +1,18 @@
 // 书籍列表
 import { ReadBook } from "../main";
 import * as vscode from "vscode";
-
+import storage from "../storage/storage";
+var books: any[] = [];
 export class BookList implements vscode.TreeDataProvider<BookItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<BookItem | undefined | void> = new vscode.EventEmitter<BookItem | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<BookItem | undefined | void> = this._onDidChangeTreeData.event;
 
     private books: any = [];
     constructor() {
-        this.getBooks();
     }
-
-    async getBooks() {
-        this.refresh();
-    }
-
     refresh(): void {
-
+        this.books = books;
+        this._onDidChangeTreeData.fire();
     }
 
     getTreeItem(element: BookItem): vscode.TreeItem {
@@ -47,9 +45,19 @@ export class BookItem extends vscode.TreeItem {
 
     contextValue = 'books';
 }
-
+var provider: BookList;
 export default {
     run(app: ReadBook) {
-        vscode.window.registerTreeDataProvider('books', new BookList());
+        provider = new BookList();
+        books = storage.getStorage('books');
+        provider.refresh();
+        vscode.window.registerTreeDataProvider('books', provider);
+    },
+    setItems(contents: any[]) {
+        books = contents;
+        provider.refresh();
+    },
+    getItems() {
+        return books;
     }
 };

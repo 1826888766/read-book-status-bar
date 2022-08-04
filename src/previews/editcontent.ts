@@ -9,13 +9,16 @@ function register(title: string) {
         provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CodeLens[]> {
             console.log(document.lineCount);
             let codelenss = [];
-            if (range) {
-                let code = new vscode.CodeLens(range, {
-                    arguments: [title],
-                    command: "",
-                    title: `// ${title}`
-                });
-                codelenss.push(code);
+            
+            if (title){
+                if (range) {
+                    let code = new vscode.CodeLens(range, {
+                        arguments: [title],
+                        command: "",
+                        title: `// ${title}`
+                    });
+                    codelenss.push(code);
+                }
             }
             return codelenss;
         }
@@ -23,6 +26,7 @@ function register(title: string) {
 }
 
 function init() {
+
     if(vscode.window.activeTextEditor){
         let selections = vscode.window.activeTextEditor.selections[0];
         if (selections){
@@ -34,8 +38,10 @@ function init() {
     
     vscode.window.onDidChangeTextEditorSelection((e) => {
         let selections = e.selections[0];
-        range = new vscode.Range(selections.active, selections.active);
-        reset();
+        if (selections){
+            range = new vscode.Range(selections.active, selections.active);
+            reset();
+        }
     });
 }
 

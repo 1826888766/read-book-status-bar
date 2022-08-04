@@ -1,9 +1,10 @@
 import { ReadBook } from "../main";
 import { commands, window, StatusBarAlignment, StatusBarItem } from "vscode";
 import content from "../providers/content";
-const os = require("node:os");
-const path = require("path");
-const fs = require("fs");
+import storage from "../storage/storage";
+import book from "../providers/book";
+import path = require("path");
+import os = require("os");
 var handler: ReadBook, importStatusBarItem: StatusBarItem;
 
 function _import() {
@@ -35,11 +36,24 @@ async function loadFile(file: string) {
         return false;
     }
     var platform = os.platform();
-    if (platform.search("win") !== false) {
+    if (platform.search("win") !== -1) {
         file = file.replace('\/', '');
     }
     navList = await praseNav(file);
     content.setItems(navList);
+    var books: any[] = storage.getStorage('books');
+    if (books.map(item => item.url).indexOf(file) === -1) {
+        books.push([
+            {
+                title: path.parse(file).name,
+                url: file,
+                type: "file",
+            }
+        ]);
+        storage.setStorage('books', books);
+        book.setItems(books);
+    }
+
     return navList;
 }
 const readline = require('linebyline');

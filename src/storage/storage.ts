@@ -11,8 +11,8 @@ function init() {
     ]);
 }
 
-function getStorage(key: string, defaultValue?: string): string | undefined {
-    let value: string | undefined = storage.get(key);
+function getStorage(key: string, defaultValue?: string): any {
+    let value: any | undefined = storage.get(key);
     if (value) {
         value = JSON.parse(value).value;
     }

@@ -51,5 +51,8 @@ export default {
     setItems(contents: any[]) {
         provider.contents = contents;
         provider.refresh();
+    },
+    getItems(){
+        return provider.contents;
     }
 };
