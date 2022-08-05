@@ -56,8 +56,14 @@
           "when": "view == books"
         },
         {
+          "command": "read-book-status-bar.del-book",
+          "group": "inline",
+          "when": "view == books"
+        },
+        {
           "command": "read-book-status-bar.read-edit",
-          "group": "inline"
+          "group": "inline",
+          "when": "view == content"
         }
       ],
       "view/title": [
@@ -128,11 +134,11 @@
       },
       {
         "command": "read-book-status-bar.select-book",
-        "title": "阅读",
-        "icon": {
-          "light": "./icon/read-light.svg",
-          "dark": "./icon/read-dark.svg"
-        }
+        "title": "阅读"
+      },
+      {
+        "command": "read-book-status-bar.del-book",
+        "title": "删除"
       },
       {
         "command": "read-book-status-bar.list",

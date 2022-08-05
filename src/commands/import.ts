@@ -37,7 +37,9 @@ async function loadFile(file: string) {
     }
     var platform = os.platform();
     if (platform.search("win") !== -1) {
-        file = file.replace('\/', '');
+        if (file.startsWith('/')) {
+            file = file.replace('/', '');
+        }
     }
     navList = await praseNav(file);
     content.setItems(navList);
@@ -51,6 +53,7 @@ async function loadFile(file: string) {
             }
         ]);
         storage.setStorage('books', books);
+        storage.setStorage('nav_' + path.parse(file).name, navList);
         book.setItems(books);
     }
 
@@ -80,7 +83,7 @@ async function praseNav(file: string): Promise<any[]> {
             }
             i++;
         }).on('error', (err: any) => {
-            reject();
+            window.showErrorMessage(err.message);
         });
         rl.on("end", function () {
             console.log("加载完成");
@@ -120,5 +123,6 @@ export default {
     },
     getContent(item: any): Promise<any[]> {
         return praseContent(item);
-    }
+    },
+    loadFile
 };

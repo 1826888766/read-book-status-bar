@@ -5,6 +5,8 @@ import statusview from "../previews/statusview";
 import editcontent from "../previews/editcontent";
 import content, { ContentItem } from "../providers/content";
 import _import from "./import";
+import storage from "../storage/storage";
+import book from "../providers/book";
 const format = require("string-format");
 var handler: ReadBook, nextStatusBarItem, stopStatusBarItem: StatusBarItem, startStatusBarItem: StatusBarItem;
 
@@ -179,12 +181,26 @@ function list() {
     }];
     commands.registerCommand(command, async (e) => {
         // console.log(e);
-        statusview.write('$(loading) 正在加载书籍《' + e.label + '》...');
-        quickPick.title = e.label;
-        quickPick.placeholder = "正在加载目录请稍后";
-        quickPick.show();
-        let list: any[] = await Request.getInstance(domain).catalog(e.detail);
+        statusview.write('$(loading~spin) 正在加载书籍《' + (e.title || e.label) + '》...');
+        let list: any[] = storage.getStorage('nav_' + (e.title || e.label));
+        if (!list) {
+            list = await Request.getInstance(e.domain || domain).catalog(e.url || e.detail);
+        }
         // 获取当前网站
+        let books: any[] = book.getItems();
+
+        if (books.map(item => item.url).indexOf(e.url || e.detail) === -1) {
+            books.push({
+                title: e.label,
+                url: e.detail,
+                type: domain.name,
+                domain
+            });
+            book.setItems(books);
+            storage.setStorage('books', books);
+            storage.setStorage('nav_' + e.label, list);
+        }
+
         content.setItems(list.map((item) => {
             return {
                 title: item.content,
@@ -192,6 +208,32 @@ function list() {
                 parent: e
             };
         }));
+
+        statusview.write('$(check) 目录加载成功《' + e.label + '》');
+    });
+}
+
+function selectBook() {
+    let command = "read-book-status-bar.select-book";
+    commands.registerCommand(command, async (e: ContentItem) => {
+        view = editcontent;
+        if (e.element.type === "file") {
+            _import.loadFile(e.element.url);
+        } else {
+            commands.executeCommand('read-book-status-bar.list', e.element);
+        }
+    });
+}
+function delBook() {
+    let command = "read-book-status-bar.del-book";
+    commands.registerCommand(command, async (e: ContentItem) => {
+        view = editcontent;
+        var books: any[] = storage.getStorage('books');
+        books = books.filter(item => {
+            return item.url != e.element.url;
+        });
+        storage.setStorage('books', books);
+        book.setItems(books);
     });
 }
 // 初始化阅读控制
@@ -205,6 +247,8 @@ function init() {
     list();
     read();
     readEdit();
+    selectBook();
+    delBook();
 }
 
 export default {
