@@ -32,14 +32,20 @@
     "views": {
       "read-book-status-bar": [
         {
+          "id": "domain",
+          "name": "网站",
+          "visibility": "collapsed"
+        },
+        {
           "id": "content",
           "name": "目录",
           "icon": "book.svg",
-          "contextualTitle": "content"
+          "visibility": "visible"
         },
         {
           "id": "books",
-          "name": "书架"
+          "name": "书架",
+          "visibility": "collapsed"
         }
       ]
     },
@@ -64,17 +70,28 @@
           "command": "read-book-status-bar.read-edit",
           "group": "inline",
           "when": "view == content"
+        },
+        {
+          "command": "read-book-status-bar.search",
+          "group": "inline",
+          "when": "view == domain"
+        },
+        {
+          "command": "read-book-status-bar.domain-del",
+          "group": "inline",
+          "when": "view == domain"
+        },
+        {
+          "command": "read-book-status-bar.domain-edit",
+          "group": "inline",
+          "when": "view == domain"
         }
       ],
       "view/title": [
         {
-          "command": "read-book-status-bar.refresh",
-          "group": "navigation"
-        },
-        {
-          "command": "read-book-status-bar.search",
+          "command": "read-book-status-bar.domain-add",
           "group": "navigation",
-          "when": "view == books"
+          "when": "view == domain"
         }
       ]
     },
@@ -111,10 +128,21 @@
       {
         "command": "read-book-status-bar.search",
         "title": "状态栏读书：搜索",
-        "icon": {
-          "light": "./icon/search-light.svg",
-          "dark": "./icon/search-dark.svg"
-        }
+        "icon": "$(search)"
+      },
+      {
+        "command": "read-book-status-bar.domain-add",
+        "title": "添加",
+        "icon": "$(add)"
+      }, {
+        "command": "read-book-status-bar.domain-edit",
+        "title": "编辑",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "read-book-status-bar.domain-del",
+        "title": "删除",
+        "icon": "$(trash)"
       },
       {
         "command": "read-book-status-bar.write",
@@ -123,10 +151,7 @@
       {
         "command": "read-book-status-bar.refresh",
         "title": "重新拉取目录",
-        "icon": {
-          "light": "./icon/refresh-light.svg",
-          "dark": "./icon/refresh-dark.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "read-book-status-bar.read",
@@ -142,14 +167,15 @@
       },
       {
         "command": "read-book-status-bar.del-book",
-        "title": "删除"
+        "title": "删除",
+        "icon": "$(trash)"
       },
       {
         "command": "read-book-status-bar.list",
         "title": "状态栏读书：目录"
       },
       {
-        "command": "read-book-status-bar.pre",
+        "command": "read-book-status-bar.prev",
         "title": "状态栏读书：上一章"
       },
       {
@@ -199,47 +225,10 @@
           "default": true,
           "description": "是否自动阅读下一行"
         },
-        "read-book-status-bar.navIndex": {
-          "type": "number",
-          "default": 0,
-          "description": "阅读到第几章"
-        },
-        "read-book-status-bar.pageIndex": {
-          "type": "number",
-          "default": 0,
-          "description": "阅读到第几行"
-        },
-        "read-book-status-bar.type": {
-          "type": "string",
-          "enum": [
-            "file",
-            "biquge",
-            "qidian",
-            "zongheng"
-          ],
-          "default": "biquge",
-          "enumDescriptions": [
-            "本地文件[txt]",
-            "笔趣阁",
-            "起点中文网",
-            "纵横中文网"
-          ],
-          "description": "阅读平台"
-        },
         "read-book-status-bar.speed": {
           "type": "number",
           "default": 5000,
           "description": "自动阅读速度默认5s"
-        },
-        "read-book-status-bar.name": {
-          "type": "string",
-          "default": "",
-          "description": "当前阅读书籍名称"
-        },
-        "read-book-status-bar.link": {
-          "type": "string",
-          "default": "",
-          "description": "当前阅读书籍url"
         },
         "read-book-status-bar.bosstext": {
           "type": "string",
@@ -253,7 +242,7 @@
         },
         "read-book-status-bar.rule": {
           "type": "string",
-          "default": "(\\s|\\n)(第)([\\u4e00-\\u9fa5a-zA-Z0-9]{1,7})[章][^\\n]{1,35}(|\\n)",
+          "default": "(第)([\\u4e00-\\u9fa5a-zA-Z0-9]{1,7})[章][^\\n]{1,35}(|\\n)",
           "description": "文件驱动断章正则"
         }
       }

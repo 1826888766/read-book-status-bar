@@ -24,43 +24,7 @@ export class ReadBook {
 
         // 初始化命令
         this.use(import("./commands"));
-        vscode.workspace.workspaceFolders?.map((item, index) => {
-            vscode.workspace.workspaceFile;
-            let uri = vscode.Uri.parse(item.uri.path + '/.domain');
-            vscode.workspace.findFiles('.domain/*.json').then(res => {
-                if (res.length !== 0) {
-
-                    fs.mkdir(uri.path.replace('/', ''), (res) => {
-                        fs.writeFileSync(uri.path.replace('/', '') + '/test.json', '{\n' +
-                            '"name": "笔趣阁",\n' +
-                            '"url": "https://www.xbiquge.so",\n' +
-                            '"searchUrlChartSet":"gbk",\n' +
-                            '"searchUrl": "/modules/article/search.php?searchkey={name}",\n' +
-                            '"parseSearch": {\n' +
-                            '"list": "#main li",\n' +
-                            '"url": ".s2 a:href",\n' +
-                            '"content": ".s2"\n' +
-                            '},\n' +
-                            '"parseCatalog": {\n' +
-                            '  "list": "dd a",\n' +
-                            '  "url": ":href",\n' +
-                            '  "content": ""\n' +
-                            '},\n' +
-                            '"parseContent": {\n' +
-                            '  "content": "#content"\n' +
-                            '}\n' +
-                            '}');
-                    });
-                }
-
-            });
-        });
-        vscode.workspace.onDidChangeWorkspaceFolders(e => {
-
-            console.log(e.added);
-            console.log(e.removed);
-            // TODO
-        });
+        
 
         
 

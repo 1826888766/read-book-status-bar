@@ -23,12 +23,15 @@ function setStorage(key: string, value: any): void {
     value = JSON.stringify({ value, type: typeof value });
     storage.update(key, value);
 }
-
+function rmStorage(key: string): void {
+    storage.update(key, undefined);
+}
 export default {
     run(app: ReadBook) {
         handler = app;
         init();
     },
     getStorage,
-    setStorage
+    setStorage,
+    rmStorage
 };

@@ -2,8 +2,9 @@ import { ReadBook } from "../main";
 import { commands, window, StatusBarAlignment, ThemeIcon, StatusBarItem, QuickPick, QuickPickItem } from "vscode";
 import log from "../utils/log";
 import Request from "../https/request";
+import { DomainItem } from "../providers/domain";
 var handler: ReadBook, searchStatusBarItem: StatusBarItem, quickPick: QuickPick<QuickPickItem>;
-var domain = require('../domain/biquge.json');
+var domain:any;
 function search() {
     let command = "read-book-status-bar.search";
     searchStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 91);
@@ -43,6 +44,7 @@ function search() {
                 return {
                     label: item.content,
                     detail: item.url,
+                    domain,
                     buttons:[{
                         iconPath:new ThemeIcon('add'),
                         tooltip:"加入书架",
@@ -52,7 +54,10 @@ function search() {
         }, 300);
     });
 
-    commands.registerCommand(command, () => {
+    commands.registerCommand(command, (e) => {
+        if (e instanceof DomainItem){
+            domain = e;
+        }
         showSearch();
     });
 }

@@ -3,14 +3,16 @@ import { ReadBook } from "./main";
 
 const commands: string[] = [
     './storage/storage',  
-    './commands/read',  
-    './commands/import',  
-    './commands/search',  
     './providers/book',  
+    './commands/search',  
+    './commands/domain',  
+    './providers/domain',  
     './providers/content',  
     './previews/editcontent',  
     './previews/statusview',  
-    './previews/webview',  
+    './previews/webview', 
+    './commands/read',  
+    './commands/import',  
 ];
 
 

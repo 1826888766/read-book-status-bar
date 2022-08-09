@@ -1,5 +1,5 @@
 import { ReadBook } from "../main";
-import { commands, window, StatusBarAlignment, StatusBarItem } from "vscode";
+import { commands, window, StatusBarAlignment, StatusBarItem, workspace } from "vscode";
 import content from "../providers/content";
 import storage from "../storage/storage";
 import book from "../providers/book";
@@ -29,11 +29,19 @@ function _import() {
         });
     });
 }
+
 var rule = /(第)([\u4e00-\u9fa5a-zA-Z0-9]{1,7})[章][^\n]{1,35}(|\n)/g;
 var navList: any[] = [];
-async function loadFile(file: string) {
+async function loadFile(file: string,ruleString?:string) {
     if (!file) {
         return false;
+    }
+    if (!ruleString){
+        let config = workspace.getConfiguration('read-book-status-bar');
+        ruleString = config.get('rule')||"";
+    }
+    if (ruleString){
+        rule = new RegExp(ruleString,'g');
     }
     commands.executeCommand("read-book-status-bar.write","$(loading~spin) 本地书籍加载中");
     var platform = os.platform();
@@ -42,7 +50,10 @@ async function loadFile(file: string) {
             file = file.replace('/', '');
         }
     }
-    navList = await praseNav(file);
+    navList = storage.getStorage('nav_' + path.parse(file).name);
+    if (!navList){
+        navList = await praseNav(file);
+    }
     content.setItems(navList);
     var books: any[] = storage.getStorage('books');
     if (books.map(item => item.url).indexOf(file) === -1) {
@@ -50,6 +61,7 @@ async function loadFile(file: string) {
             {
                 title: path.parse(file).name,
                 url: file,
+                rule:ruleString,
                 type: "file",
             }
         );

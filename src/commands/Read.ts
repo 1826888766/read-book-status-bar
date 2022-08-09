@@ -156,8 +156,9 @@ function readEdit() {
         }
     });
 }
-let time: NodeJS.Timeout;
-let isLoadNext = false;
+var time: NodeJS.Timeout;
+var isLoadNext = false;
+var speed:number = 5000;
 function run() {
     if (isLoadNext) {
         return;
@@ -174,7 +175,7 @@ function run() {
     time = setTimeout(() => {
         contentIndex++;
         run();
-    }, 5000);
+    }, speed);
 }
 
 var quickPick: QuickPick<QuickPickItem>;
@@ -230,7 +231,7 @@ function selectBook() {
     let command = "read-book-status-bar.select-book";
     commands.registerCommand(command, async (e: ContentItem) => {
         if (e.element.type === "file") {
-            _import.loadFile(e.element.url);
+            _import.loadFile(e.element.url,e.element.rule);
         } else {
             commands.executeCommand('read-book-status-bar.list', e.element);
         }
@@ -247,6 +248,8 @@ function delBook() {
         });
         storage.setStorage('books', books);
         book.setItems(books);
+        content.setItems([]);
+        storage.rmStorage('nav_' + e.element.title);
     });
 }
 let isHide = false;
@@ -262,7 +265,7 @@ function bossKey() {
             }
         } else {
             isHide = true;
-            let config = workspace.getConfiguration();
+            let config = workspace.getConfiguration('read-book-status-bar');
             let text: string = config.get('bosstext') || "";
             commands.executeCommand('read-book-status-bar.stop');
             view.write(text);
@@ -290,6 +293,12 @@ function init() {
     delBook();
     bossKey();
     write();
+    workspace.onDidChangeConfiguration(e=>{
+        if(e.affectsConfiguration("read-book-status-bar.speed")){
+            speed = workspace.getConfiguration('read-book-status-bar').get('speed') || 5000;
+            run();
+        }
+    });
 }
 
 export default {
