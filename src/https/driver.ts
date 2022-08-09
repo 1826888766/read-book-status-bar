@@ -90,7 +90,7 @@ export default class Driver {
         let attr = parse.split(":")[1];
         let data;
         if (dom) {
-            data = $(dom);
+            data = $.find(dom);
         } else {
             data = $;
         }

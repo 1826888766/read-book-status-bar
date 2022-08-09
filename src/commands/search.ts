@@ -38,7 +38,7 @@ function search() {
         // 监听输入
         clearTimeout(time);
         time = setTimeout(async () => {
-            let list: any[] = await Request.getInstance(domain).search(e);
+            let list: any[] =await Request.getInstance(domain).search(e);
             // 获取当前网站
             quickPick.items = list.map((item) => {
                 return {
@@ -56,7 +56,7 @@ function search() {
 
     commands.registerCommand(command, (e) => {
         if (e instanceof DomainItem){
-            domain = e;
+            domain = e.element;
         }
         showSearch();
     });
