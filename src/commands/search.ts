@@ -2,7 +2,7 @@ import { ReadBook } from "../main";
 import { commands, window, StatusBarAlignment, ThemeIcon, StatusBarItem, QuickPick, QuickPickItem } from "vscode";
 import log from "../utils/log";
 import Request from "../https/request";
-import { DomainItem } from "../providers/domain";
+import  domains, { DomainItem } from "../providers/domain";
 var handler: ReadBook, searchStatusBarItem: StatusBarItem, quickPick: QuickPick<QuickPickItem>;
 var domain:any;
 function search() {
@@ -57,8 +57,19 @@ function search() {
     commands.registerCommand(command, (e) => {
         if (e instanceof DomainItem){
             domain = e.element;
+        }else{
+            domain = domains.getItems()[0];
         }
-        showSearch();
+        if(domain){
+            quickPick.title = "搜索："+ domain.name;
+            showSearch();
+        }else{
+            window.showInformationMessage('没有网站可供搜索','去添加','取消').then(res=>{
+                if(res == "去添加"){
+                    commands.executeCommand("read-book-status-bar.domain-add");
+                }
+            });
+        }
     });
 }
 
