@@ -11,7 +11,7 @@
     "小说"
   ],
   "icon": "logo.png",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "publisher": "read-book",
   "engines": {
     "vscode": "^1.50.0"

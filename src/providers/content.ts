@@ -1,6 +1,7 @@
 // 书籍列表
 import { ReadBook } from "../main";
 import * as vscode from "vscode";
+import storage from "../storage/storage";
 
 export class ContentList implements vscode.TreeDataProvider<ContentItem> {
 
@@ -36,6 +37,7 @@ export class ContentItem extends vscode.TreeItem {
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     ) {
         super(label, collapsibleState);
+
         this.tooltip = `${element.url}`;
         this.description = element.type;
         this.iconPath = !element.active ? new vscode.ThemeIcon("book") : new vscode.ThemeIcon("check");
@@ -54,5 +56,18 @@ export default {
     },
     getItems(){
         return provider.contents;
+    },
+    setActive(item:any){
+        provider.contents.forEach((element:any)=>{
+            if(element.title == item.title){
+                element.active = true;
+                element.reading = true;
+            }else{
+                element.reading = false;
+            }
+        });
+        provider.refresh();
+        let book = storage.getStorage('select-book');
+        storage.setStorage('nav_'+book.title,provider.contents);
     }
 };

@@ -141,6 +141,7 @@ function read() {
         }
         formatContents();
         commands.executeCommand('read-book-status-bar.start');
+        content.setActive(e.element);
     });
 }
 function readEdit() {
@@ -374,6 +375,12 @@ function auto() {
     if (autoRead) {
         let item = storage.getStorage('last_nav');
         if (item) {
+            content.getItems().forEach((element:any,index:number)=>{
+                if(item.title == element.title){
+                    navIndex = index;
+                    return false;
+                }
+            });
             commands.executeCommand('read-book-status-bar.read', { element: item });
         }
     }
