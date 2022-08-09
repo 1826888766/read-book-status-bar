@@ -6,6 +6,7 @@ import { ReadBook } from "./main";
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   const app = new ReadBook(context);
+  
   context.subscriptions.push(app);
 }
 

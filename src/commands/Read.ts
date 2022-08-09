@@ -1,5 +1,5 @@
 import { ReadBook } from "../main";
-import { commands, window, StatusBarAlignment, StatusBarItem, QuickPick, QuickPickItem, ThemeIcon } from "vscode";
+import { commands, window, StatusBarAlignment, StatusBarItem, QuickPick, QuickPickItem, ThemeIcon, workspace } from "vscode";
 import Request from "../https/request";
 import statusview from "../previews/statusview";
 import editcontent from "../previews/editcontent";
@@ -20,11 +20,12 @@ function next() {
     nextStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 70);
     nextStatusBarItem.command = command;
     handler.context.subscriptions.push(nextStatusBarItem);
-    nextStatusBarItem.text = `$(chevron-right) 下一章`;
+    nextStatusBarItem.text = `$(chevron-right)`;
     nextStatusBarItem.tooltip = '下一章';
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
         navIndex++;
+
         if (view === editcontent) {
             commands.executeCommand('read-book-status-bar.read-edit', {
                 element: getContents()[navIndex]
@@ -42,7 +43,7 @@ function prev() {
     nextStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 90);
     nextStatusBarItem.command = command;
     handler.context.subscriptions.push(nextStatusBarItem);
-    nextStatusBarItem.text = `$(chevron-left) 上一章`;
+    nextStatusBarItem.text = `$(chevron-left)`;
     nextStatusBarItem.tooltip = '上一章';
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
@@ -63,7 +64,7 @@ function stop() {
     stopStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 80);
     handler.context.subscriptions.push(stopStatusBarItem);
     stopStatusBarItem.command = command;
-    stopStatusBarItem.text = `$(debug-stop) 停止`;
+    stopStatusBarItem.text = `$(debug-stop)`;
     stopStatusBarItem.tooltip = '停止';
     commands.registerCommand(command, () => {
         startStatusBarItem.show();
@@ -79,7 +80,7 @@ function start() {
     startStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 81);
     handler.context.subscriptions.push(startStatusBarItem);
     startStatusBarItem.command = command;
-    startStatusBarItem.text = `$(run) 开始`;
+    startStatusBarItem.text = `$(run)`;
     startStatusBarItem.tooltip = '开始';
     startStatusBarItem.show();
     commands.registerCommand(command, () => {
@@ -88,7 +89,7 @@ function start() {
         if (loadContents.length > 0) {
             run();
         } else {
-            if (view === editcontent) {
+            if (view == editcontent) {
                 commands.executeCommand('read-book-status-bar.read-edit', {
                     element: getContents()[navIndex]
                 });
@@ -120,27 +121,31 @@ function prevLine() {
     });
 }
 let loadContents: string[] = [];
-let view: any;
+let view: any = statusview;
 function read() {
     let command = "read-book-status-bar.read";
     commands.registerCommand(command, async (e: ContentItem) => {
         view = statusview;
+        isHide = false;
         contentIndex = 0;
         if (e.element.type === "file") {
             loadContents = await _import.getContent(e.element);
-            run();
+            isLoadNext = false;
+            
         } else {
-            let loadContent = await Request.getInstance(domain).content(e.element);
+            let loadContent = await Request.getInstance(e.element.domain || domain).content(e.element);
             loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
-            run();
+            isLoadNext = false;
         }
+        commands.executeCommand('read-book-status-bar.start');
     });
 }
 function readEdit() {
-    contentIndex = 0;
     let command = "read-book-status-bar.read-edit";
     commands.registerCommand(command, async (e: ContentItem) => {
+        contentIndex = 0;
         view = editcontent;
+        isHide = false;
         if (e.element.type === "file") {
             loadContents = await _import.getContent(e.element);
             run();
@@ -152,14 +157,21 @@ function readEdit() {
     });
 }
 let time: NodeJS.Timeout;
+let isLoadNext = false;
 function run() {
+    if (isLoadNext) {
+        return;
+    }
     clearTimeout(time);
     view.write(loadContents[contentIndex]);
+    if (contentIndex >= loadContents.length) {
+        statusview.write('$(loading~spin) 正在加载下一章');
+        isLoadNext = true;
+        commands.executeCommand('read-book-status-bar.stop');
+        commands.executeCommand('read-book-status-bar.next');
+        return;
+    }
     time = setTimeout(() => {
-        if (contentIndex >= loadContents.length) {
-            commands.executeCommand('read-book-status-bar.next');
-            return;
-        }
         contentIndex++;
         run();
     }, 5000);
@@ -209,19 +221,20 @@ function list() {
             };
         }));
 
-        statusview.write('$(check) 目录加载成功《' + e.label + '》');
+        statusview.write('$(check) 目录加载成功《' + (e.title || e.label) + '》');
     });
 }
 
 function selectBook() {
+
     let command = "read-book-status-bar.select-book";
     commands.registerCommand(command, async (e: ContentItem) => {
-        view = editcontent;
         if (e.element.type === "file") {
             _import.loadFile(e.element.url);
         } else {
             commands.executeCommand('read-book-status-bar.list', e.element);
         }
+        storage.setStorage('select-book', e.element);
     });
 }
 function delBook() {
@@ -234,6 +247,32 @@ function delBook() {
         });
         storage.setStorage('books', books);
         book.setItems(books);
+    });
+}
+let isHide = false;
+function bossKey() {
+    let command = "read-book-status-bar.bosskey";
+    commands.registerCommand(command, async () => {
+        if (isHide) {
+            isHide = false;
+            if (loadContents.length > 0) {
+                commands.executeCommand('read-book-status-bar.start');
+            } else {
+                view.write("$(loading~spin) 等待选择章节");
+            }
+        } else {
+            isHide = true;
+            let config = workspace.getConfiguration();
+            let text: string = config.get('bosstext') || "";
+            commands.executeCommand('read-book-status-bar.stop');
+            view.write(text);
+        }
+    });
+}
+function write() {
+    let command = "read-book-status-bar.write";
+    commands.registerCommand(command, async (e: string) => {
+        view.write(e);
     });
 }
 // 初始化阅读控制
@@ -249,6 +288,8 @@ function init() {
     readEdit();
     selectBook();
     delBook();
+    bossKey();
+    write();
 }
 
 export default {

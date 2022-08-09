@@ -7,7 +7,7 @@ var domain = require('../domain/biquge.json');
 function search() {
     let command = "read-book-status-bar.search";
     searchStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 91);
-    searchStatusBarItem.text = '$(search) 搜索';
+    searchStatusBarItem.text = '$(search)';
     searchStatusBarItem.tooltip = '搜索';
     searchStatusBarItem.command = command;
     searchStatusBarItem.show();

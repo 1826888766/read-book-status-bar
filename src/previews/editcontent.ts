@@ -10,7 +10,7 @@ function register(title: string) {
             console.log(document.lineCount);
             let codelenss = [];
             
-            if (title){
+            if (!isHide&&title){
                 if (range) {
                     let code = new vscode.CodeLens(range, {
                         arguments: [title],
@@ -53,10 +53,19 @@ function reset() {
 }
 
 var msg = "";
+var isHide = false;
 export default {
     run(app: ReadBook) {
         handler = app;
         init();
+    },
+    hide(){
+        isHide = true;
+        reset();
+    },
+    show(){
+        isHide = false;
+        reset();
     },
     async write(str: string) {
         msg = str;

@@ -10,7 +10,7 @@ var handler: ReadBook, importStatusBarItem: StatusBarItem;
 function _import() {
     let command = "read-book-status-bar.import";
     importStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 60);
-    importStatusBarItem.text = '$(add) 导入';
+    importStatusBarItem.text = '$(add)';
     importStatusBarItem.tooltip = '导入';
     importStatusBarItem.command = command;
     importStatusBarItem.show();
@@ -35,6 +35,7 @@ async function loadFile(file: string) {
     if (!file) {
         return false;
     }
+    commands.executeCommand("read-book-status-bar.write","$(loading~spin) 本地书籍加载中");
     var platform = os.platform();
     if (platform.search("win") !== -1) {
         if (file.startsWith('/')) {
@@ -45,18 +46,18 @@ async function loadFile(file: string) {
     content.setItems(navList);
     var books: any[] = storage.getStorage('books');
     if (books.map(item => item.url).indexOf(file) === -1) {
-        books.push([
+        books.push(
             {
                 title: path.parse(file).name,
                 url: file,
                 type: "file",
             }
-        ]);
+        );
         storage.setStorage('books', books);
         storage.setStorage('nav_' + path.parse(file).name, navList);
         book.setItems(books);
     }
-
+    commands.executeCommand("read-book-status-bar.write","$(check) 本地书籍加载完成");
     return navList;
 }
 const readline = require('linebyline');
@@ -68,7 +69,6 @@ async function praseNav(file: string): Promise<any[]> {
     let list: any[] = [];
     return new Promise((resolve, reject) => {
         // listen for `line` event
-        let i = 0;
         rl.on('line', (line: any, lineCount: any, byteCount: any) => {
             if (rule.test(line)) {
                 list.push({
@@ -77,11 +77,14 @@ async function praseNav(file: string): Promise<any[]> {
                     file: file,
                     url: lineCount,
                     start: lineCount,
-                    end: lineCount + i,
+                    end: lineCount,
                 });
-                i = 0;
+            }else{
+                let pre = list[list.length - 1];
+                if (pre){
+                    pre.end++;
+                }
             }
-            i++;
         }).on('error', (err: any) => {
             window.showErrorMessage(err.message);
         });

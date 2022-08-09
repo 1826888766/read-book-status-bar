@@ -12,6 +12,12 @@ export default {
         handler = app;
         init();
     },
+    hide(){
+        previewStatusBarItem.hide();
+    },
+    show(){
+        previewStatusBarItem.show();
+    },
     async write(msg: string) {
         previewStatusBarItem.text = msg;
     }

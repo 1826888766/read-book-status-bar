@@ -11,7 +11,7 @@
     "小说"
   ],
   "icon": "logo.png",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "publisher": "read-book",
   "engines": {
     "vscode": "^1.50.0"
@@ -89,13 +89,13 @@
     },
     "keybindings": [
       {
-        "command": "read-book-status-bar.up",
+        "command": "read-book-status-bar.prev-line",
         "key": "ctrl+alt+w",
         "mac": "cmd+alt+w",
         "when": "isLinux || isWindows || isMac"
       },
       {
-        "command": "read-book-status-bar.down",
+        "command": "read-book-status-bar.next-line",
         "key": "ctrl+alt+s",
         "mac": "cmd+alt+s",
         "when": "isLinux || isWindows || isMac"
@@ -103,7 +103,7 @@
       {
         "command": "read-book-status-bar.bosskey",
         "key": "ctrl+alt+b",
-        "mac": "ctrl+alt+b",
+        "mac": "cmd+alt+b",
         "when": "isLinux || isWindows || isMac"
       }
     ],
@@ -115,6 +115,10 @@
           "light": "./icon/search-light.svg",
           "dark": "./icon/search-dark.svg"
         }
+      },
+      {
+        "command": "read-book-status-bar.write",
+        "title": "输出内容"
       },
       {
         "command": "read-book-status-bar.refresh",
@@ -153,11 +157,11 @@
         "title": "状态栏读书：下一章"
       },
       {
-        "command": "read-book-status-bar.up",
+        "command": "read-book-status-bar.prev-line",
         "title": "状态栏读书：上一行"
       },
       {
-        "command": "read-book-status-bar.down",
+        "command": "read-book-status-bar.next-line",
         "title": "状态栏读书：下一行"
       },
       {

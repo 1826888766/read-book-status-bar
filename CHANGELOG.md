@@ -1,3 +1,30 @@
+# 2.0.1
+## 本次更新去除sqlite数据库存储，改用vscode的storageState，加载速度更快
+## 去除已阅读状态
+## 新增注释阅读方式
+## 重新定义网站爬取规则，支持自定义网站
+```json
+{
+  "name": "笔趣阁", // 网站名称
+  "url": "https://www.xbiquge.so", // 网站网址
+  "searchUrlChartSet":"gbk", // 网站搜索url编码 // 没有特殊需要不传入
+  "searchUrl": "/modules/article/search.php?searchkey={name}", // 搜索网址
+  "parseSearch": {
+    "list": "#main li", // 搜索的页面，列表搜索，参考jquery
+    "url": ".s2 a:href", // 搜索的页面，书籍地址，参考:href 解析链接
+    "content": ".s2" // 搜索的页面，书籍名称，会自动获取text内容
+  },
+  "parseCatalog": {
+    "list": "dd a",// 目录的页面，列表搜索，参考jquery
+    "url": ":href",// 目录的页面，书籍地址，参考:href 解析链接
+    "content": "" // 目录的页面，书籍名称，会自动获取text内容
+  },
+  "parseContent": {
+    "content": "#content" // 内容页面，会自动获取text内容
+  }
+}
+```
+
 # 1.0.7
 ## 更新笔趣阁域名 优化导入顺序
 
