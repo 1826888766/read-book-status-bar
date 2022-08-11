@@ -128,7 +128,9 @@ function read() {
         storage.setStorage('last_nav', e.element);
         view = statusview;
         isHide = false;
+        editcontent.hide();
         contentIndex = 0;
+        statusview.write("$(loading~spin) 加载书籍中");
         if (e.element.type === "file") {
             loadContents = await _import.getContent(e.element);
             isLoadNext = false;
@@ -139,6 +141,7 @@ function read() {
             isLoadNext = false;
         }
         formatContents();
+        statusview.write("$(check) 加载书籍成功");
         commands.executeCommand('read-book-status-bar.start');
         content.setActive(e.element);
     });
@@ -149,15 +152,20 @@ function readEdit() {
         storage.setStorage('last_nav', e.element);
         contentIndex = 0;
         view = editcontent;
+        editcontent.show();
         isHide = false;
+        statusview.write("$(loading~spin) 加载书籍中");
         if (e.element.type === "file") {
             loadContents = await _import.getContent(e.element);
         } else {
             let loadContent = await Request.getInstance(domain).content(e.element);
             loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
         }
+        
         formatContents();
+        statusview.write("$(check) 加载书籍成功");
         commands.executeCommand('read-book-status-bar.start');
+        content.setActive(e.element);
     });
 }
 var showContents: any[] = [];
@@ -209,8 +217,7 @@ function run() {
     }
     if (autoReadRow) {
         time = setTimeout(() => {
-            contentIndex++;
-            run();
+            commands.executeCommand('read-book-status-bar.next-line');
         }, speed);
     }
 }
