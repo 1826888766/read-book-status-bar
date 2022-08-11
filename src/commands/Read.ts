@@ -189,8 +189,11 @@ function formatContents() {
                     }
                 } else {
                     newContents.push(element.trim());
+                    pre = "";
                     break;
                 }
+            }else{
+                break;
             }
         }
 

@@ -4,18 +4,17 @@ import log from "../utils/log";
 var handler: ReadBook, provider: vscode.Disposable;
 
 var range: vscode.Range;
-function register(title: string) {
+function register() {
     provider = vscode.languages.registerCodeLensProvider('*', new (class implements vscode.CodeLensProvider {
         provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CodeLens[]> {
-            console.log(document.lineCount);
             let codelenss = [];
             
-            if (!isHide&&title){
+            if (!isHide&&msg){
                 if (range) {
                     let code = new vscode.CodeLens(range, {
-                        arguments: [title],
+                        arguments: [msg],
                         command: "",
-                        title: `// ${title}`
+                        title: `// ${msg}`
                     });
                     codelenss.push(code);
                 }
@@ -31,15 +30,16 @@ function init() {
         let selections = vscode.window.activeTextEditor.selections[0];
         if (selections){
             range = new vscode.Range(selections.active, selections.active);
-            reset();
         }
        
     }
-    
+    var pre:any;
     vscode.window.onDidChangeTextEditorSelection((e) => {
         let selections = e.selections[0];
         if (selections){
             range = new vscode.Range(selections.active, selections.active);
+        }
+        if(e.kind == 2){
             reset();
         }
     });
@@ -49,7 +49,7 @@ function reset() {
     if (provider) {
         provider.dispose();
     }
-    register(msg);
+    register();
 }
 
 var msg = "";
