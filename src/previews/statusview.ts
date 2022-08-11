@@ -18,6 +18,9 @@ export default {
     show(){
         previewStatusBarItem.show();
     },
+    tip(msg:string){
+        previewStatusBarItem.tooltip = msg;
+    },
     async write(msg: string) {
         previewStatusBarItem.text = msg;
     }

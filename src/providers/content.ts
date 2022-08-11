@@ -22,7 +22,8 @@ export class ContentList implements vscode.TreeDataProvider<ContentItem> {
 
     getChildren(element?: ContentItem): Thenable<ContentItem[]> {
         var contents: ContentItem[] = [];
-        this.contents.forEach((element: any) => {
+        this.contents.forEach((element: any,index:number) => {
+            element.index = index;
             contents.push(new ContentItem(element.title, element, vscode.TreeItemCollapsibleState.None));
         });
         return Promise.resolve(contents);
@@ -58,7 +59,7 @@ export default {
         return provider.contents;
     },
     setActive(item:any){
-        provider.contents.forEach((element:any)=>{
+        provider.contents.forEach((element:any,index:number)=>{
             if(element.title == item.title){
                 element.active = true;
                 element.reading = true;

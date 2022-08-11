@@ -25,14 +25,18 @@ function next() {
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
         navIndex++;
-
+        let current = getContents()[navIndex];
+        if (!current) {
+            window.showInformationMessage('没有下一章了');
+            return false;
+        }
         if (view === editcontent) {
             commands.executeCommand('read-book-status-bar.read-edit', {
-                element: getContents()[navIndex]
+                element: current
             });
         } else {
             commands.executeCommand('read-book-status-bar.read', {
-                element: getContents()[navIndex]
+                element: current
             });
         }
     });
@@ -48,13 +52,18 @@ function prev() {
     nextStatusBarItem.show();
     commands.registerCommand(command, () => {
         navIndex--;
+        let current = getContents()[navIndex];
+        if (!current) {
+            window.showInformationMessage('没有上一章了');
+            return false;
+        }
         if (view === editcontent) {
             commands.executeCommand('read-book-status-bar.read-edit', {
-                element: getContents()[navIndex]
+                element: current
             });
         } else {
             commands.executeCommand('read-book-status-bar.read', {
-                element: getContents()[navIndex]
+                element: current
             });
         }
     });
@@ -89,6 +98,11 @@ function start() {
         if (loadContents.length > 0) {
             run();
         } else {
+            let current = getContents()[navIndex];
+            if (!current) {
+                window.showInformationMessage('没有章节了');
+                return false;
+            }
             if (view == editcontent) {
                 commands.executeCommand('read-book-status-bar.read-edit', {
                     element: getContents()[navIndex]
@@ -126,6 +140,9 @@ function read() {
     let command = "read-book-status-bar.read";
     commands.registerCommand(command, async (e: ContentItem) => {
         storage.setStorage('last_nav', e.element);
+        if (e.element.index!= undefined){
+            navIndex = e.element.index;
+        }
         view = statusview;
         isHide = false;
         editcontent.hide();
@@ -150,6 +167,9 @@ function readEdit() {
     let command = "read-book-status-bar.read-edit";
     commands.registerCommand(command, async (e: ContentItem) => {
         storage.setStorage('last_nav', e.element);
+        if (e.element.index!= undefined){
+            navIndex = e.element.index;
+        }
         contentIndex = 0;
         view = editcontent;
         editcontent.show();
@@ -161,7 +181,7 @@ function readEdit() {
             let loadContent = await Request.getInstance(domain).content(e.element);
             loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
         }
-        
+
         formatContents();
         statusview.write("$(check) 加载书籍成功");
         commands.executeCommand('read-book-status-bar.start');
@@ -192,7 +212,7 @@ function formatContents() {
                     pre = "";
                     break;
                 }
-            }else{
+            } else {
                 break;
             }
         }
@@ -210,7 +230,15 @@ function run() {
     if (autoReadRow) {
         clearTimeout(time);
     }
-    view.write(showContents[contentIndex]);
+    if(!getContents()[navIndex]){
+        statusview.tip('无章节内容');
+        return;
+    }
+    let lines = getContents().length;
+    let progress = ((contentIndex / lines) * 100).toFixed(0);
+    
+    view.write(showContents[contentIndex] + `  章节进度:${contentIndex}/${lines} ${progress}%`);
+    statusview.tip('当前章节: ' + getContents()[navIndex].title);
     if (contentIndex >= showContents.length) {
         statusview.write('$(loading~spin) 正在加载下一章');
         isLoadNext = true;
@@ -242,15 +270,15 @@ function list() {
                     list = await Request.getInstance(e.domain || domain).catalog(e.url || e.detail);
                 }
                 // 获取当前网站
-                let books: any[] = storage.getStorage("books")||[];
+                let books: any[] = storage.getStorage("books") || [];
 
                 if (books.map(item => item.url).indexOf(e.url || e.detail) === -1) {
                     log.info("书架不存在,开始加入书架");
                     let bookItem = {
                         title: (e.title || e.label),
-                        url: (e.detail||e.url),
+                        url: (e.detail || e.url),
                         type: (e.domain || domain).name,
-                        domain:(e.domain || domain)
+                        domain: (e.domain || domain)
                     };
                     books.push(bookItem);
                     book.setItems(books);
@@ -263,7 +291,7 @@ function list() {
 
                 content.setItems(list.map((item) => {
                     return {
-                        title: (item.title||item.content),
+                        title: (item.title || item.content),
                         url: item.url,
                         parent: e
                     };
@@ -386,12 +414,14 @@ function auto() {
     if (autoRead) {
         let item = storage.getStorage('last_nav');
         if (item) {
-            content.getItems().forEach((element: any, index: number) => {
-                if ((item.title||item.label) == element.title) {
+            let items:any[] = content.getItems();
+            for(let index = 0;index< items.length;index++ ){
+                const element = items[index];
+                if ((item.title || item.label) == element.title) {
                     navIndex = index;
-                    return false;
+                    break;
                 }
-            });
+            }
             commands.executeCommand('read-book-status-bar.read', { element: item });
         }
     }
