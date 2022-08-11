@@ -1,21 +1,20 @@
 import { ReadBook } from "../main";
-import { commands, window, StatusBarAlignment, StatusBarItem, QuickPick, QuickPickItem, ThemeIcon, workspace } from "vscode";
+import { commands, window, StatusBarAlignment, StatusBarItem, workspace } from "vscode";
 import Request from "../https/request";
 import statusview from "../previews/statusview";
 import editcontent from "../previews/editcontent";
 import content, { ContentItem } from "../providers/content";
-import _import from "./import";
+import _import from "./Import";
 import storage from "../storage/storage";
 import book from "../providers/book";
-import { config } from "process";
-const format = require("string-format");
+import log from "../utils/log";
 var handler: ReadBook, nextStatusBarItem, stopStatusBarItem: StatusBarItem, startStatusBarItem: StatusBarItem;
 
 var navIndex: number = 0, contentIndex: number = 0;
 function getContents() {
     return content.getItems();
 }
-var domain = require('../domain/biquge.json');
+var domain: any;
 function next() {
     let command = "read-book-status-bar.next";
     nextStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 70);
@@ -135,7 +134,7 @@ function read() {
             isLoadNext = false;
 
         } else {
-            let loadContent = await Request.getInstance(e.element.domain || domain).content(e.element);
+            let loadContent = await Request.getInstance(e.element.parent.domain).content(e.element);
             loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
             isLoadNext = false;
         }
@@ -216,56 +215,57 @@ function run() {
     }
 }
 
-var quickPick: QuickPick<QuickPickItem>;
 function list() {
     let command = "read-book-status-bar.list";
-    quickPick = window.createQuickPick();
-    quickPick.title = "搜索选择书籍";
-    quickPick.placeholder = "请输入书籍名称";
-    quickPick.buttons = [{
-        tooltip: "上一页",
-        iconPath: new ThemeIcon("arrow-left"),
-    },
-    {
-        tooltip: "下一页",
-        iconPath: new ThemeIcon("arrow-right"),
-    }];
+    log.info("注册列表命令");
     commands.registerCommand(command, async (e) => {
         // console.log(e);
-        statusview.write('$(loading~spin) 正在加载书籍《' + (e.title || e.label) + '》...');
-        if (e.type === "file") {
-            await _import.loadFile(e.url, e.rule);
-        } else {
-            let list: any[] = storage.getStorage('nav_' + (e.title || e.label));
-            if (!list) {
-                list = await Request.getInstance(e.domain || domain).catalog(e.url || e.detail);
+        try {
+
+            log.info("列表命令激活 " + JSON.stringify(e));
+            statusview.write('$(loading~spin) 正在加载书籍《' + (e.title || e.label) + '》...');
+            if (e.type === "file") {
+                await _import.loadFile(e.url, e.rule);
+            } else {
+                let list: any[] = storage.getStorage('nav_' + (e.title || e.label));
+                if (!list) {
+                    list = await Request.getInstance(e.domain || domain).catalog(e.url || e.detail);
+                }
+                // 获取当前网站
+                let books: any[] = storage.getStorage("books")||[];
+
+                if (books.map(item => item.url).indexOf(e.url || e.detail) === -1) {
+                    log.info("书架不存在,开始加入书架");
+                    let bookItem = {
+                        title: (e.title || e.label),
+                        url: (e.detail||e.url),
+                        type: (e.domain || domain).name,
+                        domain:(e.domain || domain)
+                    };
+                    books.push(bookItem);
+                    book.setItems(books);
+                    storage.setStorage('books', books);
+                    storage.setStorage('nav_' + (e.title || e.label), list);
+                    log.info("书架不存在,加入书架成功");
+                    storage.setStorage('select-book', bookItem);
+
+                }
+
+                content.setItems(list.map((item) => {
+                    return {
+                        title: (item.title||item.content),
+                        url: item.url,
+                        parent: e
+                    };
+                }));
+
+                statusview.write('$(check) 目录加载成功《' + (e.title || e.label) + '》');
             }
-            // 获取当前网站
-            let books: any[] = book.getItems();
-
-            if (books.map(item => item.url).indexOf(e.url || e.detail) === -1) {
-                books.push({
-                    title: e.label,
-                    url: e.detail,
-                    type: domain.name,
-                    domain
-                });
-                book.setItems(books);
-                storage.setStorage('books', books);
-                storage.setStorage('nav_' + e.label, list);
-            }
-
-            content.setItems(list.map((item) => {
-                return {
-                    title: item.content,
-                    url: item.url,
-                    parent: e
-                };
-            }));
-
-            statusview.write('$(check) 目录加载成功《' + (e.title || e.label) + '》');
+            auto();
         }
-        auto();
+        catch (e) {
+            log.error(JSON.stringify(e));
+        }
     });
 }
 
@@ -273,7 +273,7 @@ function selectBook() {
     let command = "read-book-status-bar.select-book";
     commands.registerCommand(command, async (e: ContentItem) => {
         if (e.label) {
-            storage.rmStorage('last_nav');
+            storage.getStorage('nav_' + (e.label));
         }
 
         commands.executeCommand('read-book-status-bar.list', e.element);
@@ -294,6 +294,7 @@ function delBook() {
         let select = storage.getStorage('select-book');
         if (select.title == e.element.title) {
             storage.rmStorage('last_nav');
+            storage.rmStorage('select-book');
         }
         content.setItems([]);
         storage.rmStorage('nav_' + e.element.title);
@@ -355,8 +356,8 @@ function init() {
             autoReadRow = workspace.getConfiguration('read-book-status-bar').get('autoReadRow') || false;
             if (!autoReadRow) {
                 clearTimeout(time);
-            }else{
-                if(loadContents.length){
+            } else {
+                if (loadContents.length) {
                     run();
                 }
             }
@@ -365,7 +366,7 @@ function init() {
 }
 var isFirst = false;
 function auto() {
-    if(isFirst) {
+    if (isFirst) {
         return false;
     }
     isFirst = true;
@@ -375,8 +376,8 @@ function auto() {
     if (autoRead) {
         let item = storage.getStorage('last_nav');
         if (item) {
-            content.getItems().forEach((element:any,index:number)=>{
-                if(item.title == element.title){
+            content.getItems().forEach((element: any, index: number) => {
+                if ((item.title||item.label) == element.title) {
                     navIndex = index;
                     return false;
                 }

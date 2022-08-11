@@ -28,6 +28,7 @@ export default class Request {
     }
 
     setDriver(driver: any) {
+        log.info("setDriver"+JSON.stringify(driver));
         if (typeof driver === "string") {
             driver = JSON.parse(driver);
         }
@@ -66,7 +67,7 @@ export default class Request {
      * 文章内容
      */
     async content(item:any): Promise<string> {
-        let url = format(this.handler.contentUrl,{list:item.parent.url||"",content:item.url});
+        let url = format(this.handler.contentUrl||"{list}{content}",{list:item.parent.detail||item.parent.url,content:item.url});
         let content = await this.request(url);
         return this.handler.getContent(content);
     }
@@ -86,7 +87,7 @@ export default class Request {
             } else {
                 http = require("https");
             }
-
+            log.info('request 请求：'+url);
             var req = http.request(options, function (res: any) {
                 let html = "";
                 res.on("data", (data: any) => {

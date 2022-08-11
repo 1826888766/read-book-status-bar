@@ -2,6 +2,7 @@ export default {
     "name": "笔趣阁",
     "url": "https://www.xbiquge.so",
     "searchUrlChartSet": "gbk",
+    "contentUrl": "{list}{content}",
     "searchUrl": "/modules/article/search.php?searchkey={name}",
     "parseSearch": {
         "list": "#main li",

@@ -90,7 +90,11 @@ export default class Driver {
         let attr = parse.split(":")[1];
         let data;
         if (dom) {
-            data = $.find(dom);
+            if (typeof $.find == "function"){
+                data = $.find(dom);
+            }else{
+                data = $(dom);
+            }
         } else {
             data = $;
         }

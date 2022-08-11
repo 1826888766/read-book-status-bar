@@ -61,6 +61,6 @@ export default {
         provider.refresh();
     },
     getItems() {
-        return provider.books;
+        return provider.books || [];
     }
 };

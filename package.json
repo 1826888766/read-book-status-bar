@@ -11,7 +11,7 @@
     "小说"
   ],
   "icon": "logo.png",
-  "version": "2.0.3",
+  "version": "2.0.10",
   "publisher": "read-book",
   "engines": {
     "vscode": "^1.50.0"
@@ -27,25 +27,26 @@
       {
         "view": "content",
         "contents": "获取书籍目录信息失败\n[重新获取](command:read-book-status-bar.refresh)\n[搜索其他书籍](command:read-book-status-bar.search)"
+      },
+      {
+        "view": "domain",
+        "contents": "[添加网站](command:read-book-status-bar.search)"
       }
     ],
     "views": {
       "read-book-status-bar": [
         {
           "id": "domain",
-          "name": "网站",
-          "visibility": "collapsed"
+          "name": "网站"
         },
         {
           "id": "content",
           "name": "目录",
-          "icon": "book.svg",
-          "visibility": "visible"
+          "icon": "book.svg"
         },
         {
           "id": "books",
-          "name": "书架",
-          "visibility": "collapsed"
+          "name": "书架"
         }
       ]
     },
@@ -90,6 +91,10 @@
       "view/title": [
         {
           "command": "read-book-status-bar.domain-add",
+          "group": "navigation",
+          "when": "view == domain"
+        },{
+          "command": "read-book-status-bar.domain-reset",
           "group": "navigation",
           "when": "view == domain"
         }
@@ -143,6 +148,10 @@
         "command": "read-book-status-bar.domain-del",
         "title": "删除",
         "icon": "$(trash)"
+      },{
+        "command": "read-book-status-bar.domain-reset",
+        "title": "重置网站路径",
+        "icon": "$(refresh)"
       },
       {
         "command": "read-book-status-bar.write",

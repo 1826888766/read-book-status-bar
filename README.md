@@ -1,5 +1,29 @@
 # read-book-status-bar README
 
+## qq群 755708694 
+```json
+// 自定义网站规则
+{
+  "name": "笔趣阁", // 网站名称
+  "url": "https://www.xbiquge.so", // 网站网址
+  "contentUrl":"{list}{content}", // 文章url规则
+  "searchUrlChartSet":"gbk", // 网站搜索url编码 // 没有特殊需要不传入
+  "searchUrl": "/modules/article/search.php?searchkey={name}", // 搜索网址
+  "parseSearch": {
+    "list": "#main li", // 搜索的页面，列表搜索，参考jquery
+    "url": ".s2 a:href", // 搜索的页面，书籍地址，参考:href 解析链接
+    "content": ".s2" // 搜索的页面，书籍名称，会自动获取text内容
+  },
+  "parseCatalog": {
+    "list": "dd a",// 目录的页面，列表搜索，参考jquery
+    "url": ":href",// 目录的页面，书籍地址，参考:href 解析链接
+    "content": "" // 目录的页面，书籍名称，会自动获取text内容
+  },
+  "parseContent": {
+    "content": "#content" // 内容页面，会自动获取text内容
+  }
+}
+```
 
 # 2.0全新升级
 

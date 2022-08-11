@@ -1,3 +1,11 @@
+# 2.0.10
+- 修复重载时加载目录问题
+- 修复加入书架没有自动选择阅读，造成重载不加载目录问题
+# 2.0.8
+- 修复远程开发时bug
+- 书架空时错误
+# 2.0.5
+- 修复非win系统路径问题
 # 2.0.1
 ## 本次更新去除sqlite数据库存储，改用vscode的storageState，加载速度更快
 ## 去除已阅读状态
@@ -6,6 +14,7 @@
 ```json
 {
   "name": "笔趣阁", // 网站名称
+  "contentUrl":"{list}{content}", // 文章url规则
   "url": "https://www.xbiquge.so", // 网站网址
   "searchUrlChartSet":"gbk", // 网站搜索url编码 // 没有特殊需要不传入
   "searchUrl": "/modules/article/search.php?searchkey={name}", // 搜索网址

@@ -29,9 +29,10 @@ function search() {
     });
     quickPick.onDidTriggerItemButton((e) => {
         // 监听按钮
-
+        log.info("加入书架"+e.item.label);
         quickPick.hide();
-        commands.executeCommand("read-book-status-bar.list",e.item);
+        commands.executeCommand("read-book-status-bar.list",e.item).then(res=>{
+        });
     });
     let time: NodeJS.Timeout;
     quickPick.onDidChangeValue(e => {

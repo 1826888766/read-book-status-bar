@@ -68,6 +68,8 @@ export default {
         });
         provider.refresh();
         let book = storage.getStorage('select-book');
-        storage.setStorage('nav_'+book.title,provider.contents);
+        if (book){
+            storage.setStorage('nav_'+book.title,provider.contents);
+        }
     }
 };
