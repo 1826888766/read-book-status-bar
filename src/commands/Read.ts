@@ -177,9 +177,11 @@ function readEdit() {
         statusview.write("$(loading~spin) 加载书籍中");
         if (e.element.type === "file") {
             loadContents = await _import.getContent(e.element);
+            isLoadNext = false;
         } else {
             let loadContent = await Request.getInstance(domain).content(e.element);
             loadContents = loadContent.replace(/[(\r\n)\r\n]+/, '。').split(/[(。|！|\!|\.|？|\?)]/);
+            isLoadNext = false;
         }
 
         formatContents();
@@ -234,18 +236,17 @@ function run() {
         statusview.tip('无章节内容');
         return;
     }
-    let lines = getContents().length;
+    let lines = showContents.length;
     let progress = ((contentIndex / lines) * 100).toFixed(0);
-    
-    view.write(showContents[contentIndex] + `  章节进度:${contentIndex}/${lines} ${progress}%`);
-    statusview.tip('当前章节: ' + getContents()[navIndex].title);
     if (contentIndex >= showContents.length) {
-        statusview.write('$(loading~spin) 正在加载下一章');
+        view.write('本章完 $(loading~spin) 正在加载下一章');
         isLoadNext = true;
-        commands.executeCommand('read-book-status-bar.stop');
         commands.executeCommand('read-book-status-bar.next');
         return;
     }
+    view.write(showContents[contentIndex] + `  章节进度:${contentIndex}/${lines} ${progress}%`);
+    statusview.tip('当前章节: ' + getContents()[navIndex].title);
+    
     if (autoReadRow) {
         time = setTimeout(() => {
             commands.executeCommand('read-book-status-bar.next-line');

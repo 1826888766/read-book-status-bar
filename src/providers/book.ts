@@ -46,9 +46,10 @@ var provider: BookList;
 export default {
     run(app: ReadBook) {
         provider = new BookList();
-        provider.books = storage.getStorage('books');
+        provider.books = storage.getStorage('books') || [];
         provider.refresh();
         vscode.window.registerTreeDataProvider('books', provider);
+
         let select = storage.getStorage('select-book');
         if (select) {
             vscode.commands.executeCommand('read-book-status-bar.select-book', {
@@ -57,7 +58,7 @@ export default {
         }
     },
     setItems(contents: any[]) {
-        provider.books = contents;
+        provider.books = contents ||[];
         provider.refresh();
     },
     getItems() {

@@ -110,6 +110,11 @@ function init() {
 }
 
 function add() {
+    vscode.workspace.onDidSaveTextDocument((ret) => {
+        if (ret.uri.path.indexOf("domain") !== -1) {
+            load();
+        }
+    });
     let command = "read-book-status-bar.domain-add";
     log.info('注册网站添加命令');
     vscode.commands.registerCommand(command, () => {
@@ -129,11 +134,7 @@ function add() {
             });
         });
     });
-    vscode.workspace.onDidSaveTextDocument((ret) => {
-        if (ret.uri.path.indexOf(domainPath) !== -1) {
-            load();
-        }
-    });
+    
 }
 function del() {
     let command = "read-book-status-bar.domain-del";

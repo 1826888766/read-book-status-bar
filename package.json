@@ -11,7 +11,7 @@
     "小说"
   ],
   "icon": "logo.png",
-  "version": "2.0.14",
+  "version": "2.0.17",
   "publisher": "read-book",
   "engines": {
     "vscode": "^1.50.0"
@@ -110,6 +110,12 @@
       ]
     },
     "keybindings": [
+      {
+        "command": "read-book-status-bar.init",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r",
+        "when": "isLinux || isWindows || isMac"
+      },
       {
         "command": "read-book-status-bar.prev-line",
         "key": "ctrl+alt+w",
@@ -218,12 +224,21 @@
           "light": "./icon/window-light.svg",
           "dark": "./icon/window-dark.svg"
         }
+      },
+      {
+        "command": "read-book-status-bar.init",
+        "title": "初始化"
       }
     ],
     "configuration": {
       "type": "object",
       "title": "状态栏读书",
       "properties": {
+        "read-book-status-bar.autoLoad": {
+          "type": "boolean",
+          "default": true,
+          "description": "启动时自动加载,关闭时使用ctrl+alt+r启动"
+        },
         "read-book-status-bar.autoRead": {
           "type": "boolean",
           "default": false,
