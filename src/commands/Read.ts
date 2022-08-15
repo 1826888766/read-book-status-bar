@@ -244,7 +244,7 @@ function run() {
         commands.executeCommand('read-book-status-bar.next');
         return;
     }
-    view.write(showContents[contentIndex] + `  章节进度:${contentIndex}/${lines} ${progress}%`);
+    view.write(showContents[contentIndex] + ` ${progress}%`);
     statusview.tip('当前章节: ' + getContents()[navIndex].title);
     
     if (autoReadRow) {

@@ -110,11 +110,6 @@ function init() {
 }
 
 function add() {
-    vscode.workspace.onDidSaveTextDocument((ret) => {
-        if (ret.uri.path.indexOf("domain") !== -1) {
-            load();
-        }
-    });
     let command = "read-book-status-bar.domain-add";
     log.info('注册网站添加命令');
     vscode.commands.registerCommand(command, () => {
@@ -132,9 +127,21 @@ function add() {
             vscode.workspace.openTextDocument(file).then(res => {
                 vscode.window.showTextDocument(res);
             });
+            load();
         });
     });
-    
+    vscode.workspace.onDidSaveTextDocument((ret) => {
+        let path = domainPath.split(":");
+        let fsPath = "";
+        if(path.length >1){
+            fsPath = path[1];
+        }else{
+            fsPath = path[0];
+        }
+        if(ret.uri.path.search(fsPath) !== -1){
+            load();
+        }
+    });
 }
 function del() {
     let command = "read-book-status-bar.domain-del";
