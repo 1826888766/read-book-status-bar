@@ -60,6 +60,11 @@ export default class Request {
      * 书籍目录
      */
     async catalog(url:string): Promise<ParseItem[]> {
+        if(url.startsWith("http://")||url.startsWith("https://")){
+
+        }else{
+            url = this.handler.url + url;
+        }
         let content = await this.request(url);
         return this.handler.getCatalogList(content);
     }
@@ -67,7 +72,13 @@ export default class Request {
      * 文章内容
      */
     async content(item:any): Promise<string> {
+
         let url = format(this.handler.contentUrl||"{list}{content}",{list:item.parent.detail||item.parent.url,content:item.url});
+        if(url.startsWith("http://")||url.startsWith("https://")){
+
+        }else{
+            url = this.handler.url + url;
+        }
         let content = await this.request(url);
         return this.handler.getContent(content);
     }
@@ -89,6 +100,9 @@ export default class Request {
             }
             log.info('request 请求：'+url);
             var req = http.request(options, function (res: any) {
+                let index = res.rawHeaders.indexOf('Content-Type');
+                let charset = res.rawHeaders[index + 1];
+                decode = charset.split("=")[1];
                 let html = "";
                 res.on("data", (data: any) => {
                     html += iconv.decode(data, decode);

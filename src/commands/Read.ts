@@ -8,6 +8,7 @@ import _import from "./Import";
 import storage from "../storage/storage";
 import book from "../providers/book";
 import log from "../utils/log";
+var format = require('string-format');
 var handler: ReadBook, nextStatusBarItem, stopStatusBarItem: StatusBarItem, startStatusBarItem: StatusBarItem;
 
 var navIndex: number = 0, contentIndex: number = 0;
@@ -236,6 +237,7 @@ function run() {
         statusview.tip('无章节内容');
         return;
     }
+   
     let lines = showContents.length;
     let progress = ((contentIndex / lines) * 100).toFixed(0);
     if (contentIndex >= showContents.length) {
@@ -244,9 +246,13 @@ function run() {
         commands.executeCommand('read-book-status-bar.next');
         return;
     }
-    view.write(showContents[contentIndex] + ` ${progress}%`);
+    let config = workspace.getConfiguration("read-book-status-bar");
+    let output = format(config.get("format")||"{content}",{
+        content:showContents[contentIndex],
+        progress:progress
+    });
+    view.write(output);
     statusview.tip('当前章节: ' + getContents()[navIndex].title);
-    
     if (autoReadRow) {
         time = setTimeout(() => {
             commands.executeCommand('read-book-status-bar.next-line');
@@ -390,6 +396,9 @@ function init() {
         }
         if (e.affectsConfiguration("read-book-status-bar.rowLength")) {
             formatContents();
+        }
+        if (e.affectsConfiguration("read-book-status-bar.format")) {
+            run();
         }
         if (e.affectsConfiguration("read-book-status-bar.autoReadRow")) {
             autoReadRow = workspace.getConfiguration('read-book-status-bar').get('autoReadRow') || false;
