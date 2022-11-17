@@ -11,7 +11,7 @@
     "小说"
   ],
   "icon": "logo.png",
-  "version": "2.0.21",
+  "version": "2.1.1",
   "publisher": "read-book",
   "engines": {
     "vscode": "^1.50.0"
@@ -93,7 +93,8 @@
           "command": "read-book-status-bar.domain-add",
           "group": "navigation",
           "when": "view == domain"
-        },{
+        },
+        {
           "command": "read-book-status-bar.domain-reset",
           "group": "navigation",
           "when": "view == domain"
@@ -145,7 +146,8 @@
         "command": "read-book-status-bar.domain-add",
         "title": "添加",
         "icon": "$(add)"
-      }, {
+      },
+      {
         "command": "read-book-status-bar.domain-edit",
         "title": "编辑",
         "icon": "$(edit)"
@@ -154,7 +156,8 @@
         "command": "read-book-status-bar.domain-del",
         "title": "删除",
         "icon": "$(trash)"
-      },{
+      },
+      {
         "command": "read-book-status-bar.domain-reset",
         "title": "重置网站路径",
         "icon": "$(refresh)"
@@ -300,9 +303,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "axios": "^0.26.0",
-    "cheerio": "^1.0.0-rc.10",
-    "iconv-lite": "^0.6.3",
+    "crawler": "^1.3.0",
     "linebyline": "^1.3.0",
     "string-format": "^2.0.0"
   },

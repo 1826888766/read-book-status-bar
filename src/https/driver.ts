@@ -18,7 +18,8 @@ export default class Driver {
      * 网站名称
      */
     name: string = "";
-
+    gzip: boolean = true;
+    method: string = "GET";
     searchUrlChartSet: string = "utf-8";
     contentUrl: string = "";
     /**
@@ -29,6 +30,8 @@ export default class Driver {
      * 搜索地址
      */
     searchUrl: string = "";
+    cookie: string = "";
+    catalogUrl: string = "";
     /**
      * 搜索解析规则
      */
@@ -90,9 +93,9 @@ export default class Driver {
         let attr = parse.split(":")[1];
         let data;
         if (dom) {
-            if (typeof $.find == "function"){
+            if (typeof $.find == "function") {
                 data = $.find(dom);
-            }else{
+            } else {
                 data = $(dom);
             }
         } else {
@@ -110,18 +113,7 @@ export default class Driver {
         if (typeof driver === "string") {
             driver = JSON.parse(driver);
         }
-        obj.name = driver.name;
-        obj.url = driver.url;
-        obj.searchUrl = driver.searchUrl;
-        if (driver.searchUrlChartSet) {
-            obj.searchUrlChartSet = driver.searchUrlChartSet;
-        }
-        if (driver.contentUrl) {
-            obj.contentUrl = driver.contentUrl;
-        }
-        obj.parseSearch = driver.parseSearch;
-        obj.parseCatalog = driver.parseCatalog;
-        obj.parseContent = driver.parseContent;
+        obj = Object.assign(obj,driver);
         return obj;
     }
 }

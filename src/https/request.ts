@@ -1,10 +1,10 @@
 import log from "../utils/log";
 import Driver, { ParseItem } from "./driver";
-var uri = require("url");
-var cheerio = require("cheerio");
-var iconv = require("iconv-lite");
 var format = require('string-format');
+var Crawler = require("crawler");
 import GBK from "../utils/gbk";
+
+var c = new Crawler({});
 export default class Request {
     //@ts-ignore
     public handler: Driver;
@@ -28,7 +28,7 @@ export default class Request {
     }
 
     setDriver(driver: any) {
-        log.info("setDriver"+JSON.stringify(driver));
+        log.info("setDriver" + JSON.stringify(driver));
         if (typeof driver === "string") {
             driver = JSON.parse(driver);
         }
@@ -59,10 +59,11 @@ export default class Request {
     /**
      * 书籍目录
      */
-    async catalog(url:string): Promise<ParseItem[]> {
-        if(url.startsWith("http://")||url.startsWith("https://")){
+    async catalog(item: any): Promise<ParseItem[]> {
+        let url = format(this.handler.catalogUrl || "{list}", { list: item.detail });
+        if (url.startsWith("http://") || url.startsWith("https://")) {
 
-        }else{
+        } else {
             url = this.handler.url + url;
         }
         let content = await this.request(url);
@@ -71,12 +72,12 @@ export default class Request {
     /**
      * 文章内容
      */
-    async content(item:any): Promise<string> {
+    async content(item: any): Promise<string> {
 
-        let url = format(this.handler.contentUrl||"{list}{content}",{list:item.parent.detail||item.parent.url,content:item.url});
-        if(url.startsWith("http://")||url.startsWith("https://")){
+        let url = format(this.handler.contentUrl || "{list}{content}", { list: item.parent.detail || item.parent.url, content: item.url });
+        if (url.startsWith("http://") || url.startsWith("https://")) {
 
-        }else{
+        } else {
             url = this.handler.url + url;
         }
         let content = await this.request(url);
@@ -91,33 +92,24 @@ export default class Request {
      */
     request(url: string, decode: string = "GBK"): Promise<any> {
         return new Promise((resolve, reject) => {
-            var options = uri.parse(url);
-            var http;
-            if (url.search('http://') !== -1) {
-                http = require("http");
-            } else {
-                http = require("https");
-            }
-            log.info('request 请求：'+url);
-            var req = http.request(options, function (res: any) {
-                let index = res.rawHeaders.indexOf('Content-Type');
-                let charset = res.rawHeaders[index + 1];
-                decode = charset.split("=")[1];
-                let html = "";
-                res.on("data", (data: any) => {
-                    html += iconv.decode(data, decode);
-                });
-                res.on("end", () => {
-                    resolve(cheerio.load(html));
-                });
-            });
-
-            req.on("error", function (e: any) {
-                console.log("problem with request: " + e.message);
-                reject(e.message);
-            });
-
-            req.end();
+            log.info('request 请求：' + url);
+            c.queue([{
+                uri: url,
+                methods: this.handler.method || "GET",
+                gzip: this.handler.gzip,
+                // The global callback won't be called
+                callback: function (error: any, res: any, done: Function) {
+                    if (error) {
+                        log.info(error);
+                    } else {
+                        var $ = res.$;
+                        // $ 默认为 Cheerio 解析器
+                        // 它是核心jQuery的精简实现，可以按照jQuery选择器语法快速提取DOM元素
+                        resolve($);
+                    }
+                    done();
+                }
+            }]);
         });
     }
 }

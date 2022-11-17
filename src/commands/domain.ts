@@ -27,7 +27,7 @@ function load() {
                         }).then(res => {
                             if (res) {
                                 domainPath = res[0].path;
-                                if (os.platform().indexOf("win") != -1) {
+                                if (os.platform().indexOf("win") !== -1) {
                                     if (domainPath.startsWith('/')) {
                                         domainPath = domainPath.replace('/', '');
                                     }
@@ -75,7 +75,7 @@ function load() {
                 }).then(res => {
                     if (res) {
                         domainPath = res[0].path;
-                        if (os.platform().indexOf("win") != -1) {
+                        if (os.platform().indexOf("win") !== -1) {
                             if (domainPath.startsWith('/')) {
                                 domainPath = domainPath.replace('/', '');
                             }

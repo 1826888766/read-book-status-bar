@@ -240,7 +240,7 @@ function run() {
    
     let lines = showContents.length;
     let progress = ((contentIndex / lines) * 100).toFixed(0);
-    if (contentIndex >= showContents.length) {
+    if (contentIndex > showContents.length) {
         view.write('本章完 $(loading~spin) 正在加载下一章');
         isLoadNext = true;
         commands.executeCommand('read-book-status-bar.next');
@@ -274,7 +274,7 @@ function list() {
             } else {
                 let list: any[] = storage.getStorage('nav_' + (e.title || e.label));
                 if (!list) {
-                    list = await Request.getInstance(e.domain || domain).catalog(e.url || e.detail);
+                    list = await Request.getInstance(e.domain || domain).catalog(e);
                 }
                 // 获取当前网站
                 let books: any[] = storage.getStorage("books") || [];
