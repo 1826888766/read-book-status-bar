@@ -75,6 +75,7 @@ export default class Driver {
      */
     execParseList($: any, parse: ParseItem): ParseItem[] {
         let list: ParseItem[] = [];
+        console.log($.html());
         $(parse.list).each((i: number, elem: any) => {
             let item: ParseItem = {
                 url: "",

@@ -95,14 +95,17 @@ export default class Request {
             log.info('request 请求：' + url);
             c.queue([{
                 uri: url,
+                followAllRedirects:true,
                 methods: this.handler.method || "GET",
                 gzip: this.handler.gzip,
+                referer:this.handler.url,
                 // The global callback won't be called
                 callback: function (error: any, res: any, done: Function) {
-                    if (error) {
+                if (error) {
                         log.info(error);
                     } else {
                         var $ = res.$;
+                        log.info(res);
                         // $ 默认为 Cheerio 解析器
                         // 它是核心jQuery的精简实现，可以按照jQuery选择器语法快速提取DOM元素
                         resolve($);
