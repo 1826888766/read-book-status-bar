@@ -22,6 +22,7 @@ export default class Driver {
     method: string = "GET";
     searchUrlChartSet: string = "utf-8";
     contentUrl: string = "";
+    data:any = {};
     /**
      * 网站地址
      */

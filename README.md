@@ -5,10 +5,11 @@
 // 自定义网站规则
 {
   "name": "笔趣阁", // 网站名称
-  "url": "https://www.xbiquge.so", // 网站网址
+  "url": "https://www.xbiquge.so", // 网站网址‘
+  "gzip":true, // 应对某些网站开启gzip压缩
   "contentUrl":"{list}{content}", // 文章url规则
   "searchUrlChartSet":"gbk", // 网站搜索url编码 // 没有特殊需要不传入
-  "searchUrl": "/modules/article/search.php?searchkey={name}", // 搜索网址
+  "searchUrl": "/modules/article/search.php?searchkey={name}", // 搜索网址 {name}为搜索的内容
   "parseSearch": {
     "list": "#main li", // 搜索的页面，列表搜索，参考jquery
     "url": ".s2 a:href", // 搜索的页面，书籍地址，参考:href 解析链接
@@ -79,3 +80,4 @@
 > 上一行  windows `ctrl+alt+w` mac `cmd+alt+w`
 >
 > 下一行  windows `ctrl+alt+s` mac `cmd+alt+s`
+# 本插件仅供学习和参考

@@ -1,5 +1,5 @@
 import { ReadBook } from "../main";
-import { StatusBarAlignment, StatusBarItem, window } from "vscode";
+import { StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
 var handler: ReadBook, previewStatusBarItem: StatusBarItem;
 function init() {
     previewStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
@@ -7,6 +7,7 @@ function init() {
     previewStatusBarItem.show();
     handler.context.subscriptions.push(previewStatusBarItem);
 }
+let timer:NodeJS.Timeout;
 export default {
     run(app: ReadBook) {
         handler = app;
@@ -23,5 +24,14 @@ export default {
     },
     async write(msg: string) {
         previewStatusBarItem.text = msg;
+        this.clear();
+    },
+    clear(){
+        clearTimeout(timer);
+        let speed:number = workspace.getConfiguration('read-book-status-bar').get('speed') || 5000;
+
+        timer = setTimeout(() => {
+            previewStatusBarItem.text = '';
+        }, speed + 1000);
     }
 };
