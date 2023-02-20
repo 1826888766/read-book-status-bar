@@ -141,7 +141,7 @@ function read() {
     let command = "read-book-status-bar.read";
     commands.registerCommand(command, async (e: ContentItem) => {
         storage.setStorage('last_nav', e.element);
-        if (e.element.index!= undefined){
+        if (e.element.index != undefined) {
             navIndex = e.element.index;
         }
         view = statusview;
@@ -168,7 +168,7 @@ function readEdit() {
     let command = "read-book-status-bar.read-edit";
     commands.registerCommand(command, async (e: ContentItem) => {
         storage.setStorage('last_nav', e.element);
-        if (e.element.index!= undefined){
+        if (e.element.index != undefined) {
             navIndex = e.element.index;
         }
         contentIndex = 0;
@@ -205,7 +205,7 @@ function formatContents() {
                     let line = element.slice(0, rowLength);
                     pre = element.slice(rowLength, element.length);
                     newContents.push(line.trim());
-                    if (pre.length > rowLength) {
+                    if (pre.length >= rowLength) {
                         element = pre;
                     } else {
                         break;
@@ -219,8 +219,10 @@ function formatContents() {
                 break;
             }
         }
-
     });
+    if(pre){
+        newContents.push(pre);
+    }
     showContents = newContents;
 }
 var time: NodeJS.Timeout;
@@ -233,11 +235,11 @@ function run() {
     if (autoReadRow) {
         clearTimeout(time);
     }
-    if(!getContents()[navIndex]){
+    if (!getContents()[navIndex]) {
         statusview.tip('无章节内容');
         return;
     }
-   
+
     let lines = showContents.length;
     let progress = ((contentIndex / lines) * 100).toFixed(0);
     if (contentIndex > showContents.length) {
@@ -247,9 +249,9 @@ function run() {
         return;
     }
     let config = workspace.getConfiguration("read-book-status-bar");
-    let output = format(config.get("format")||"{content}",{
-        content:showContents[contentIndex],
-        progress:progress
+    let output = format(config.get("format") || "{content}", {
+        content: showContents[contentIndex],
+        progress: progress
     });
     view.write(output);
     statusview.tip('当前章节: ' + getContents()[navIndex].title);
@@ -424,8 +426,8 @@ function auto() {
     if (autoRead) {
         let item = storage.getStorage('last_nav');
         if (item) {
-            let items:any[] = content.getItems();
-            for(let index = 0;index< items.length;index++ ){
+            let items: any[] = content.getItems();
+            for (let index = 0; index < items.length; index++) {
                 const element = items[index];
                 if ((item.title || item.label) == element.title) {
                     navIndex = index;
