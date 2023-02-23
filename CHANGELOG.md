@@ -1,3 +1,17 @@
+# 2.2.2
+增加阅读页面多页内容翻页问题
+
+```json
+{...
+  "contentPage": true,
+  "contentCheckNext": {
+    "content": ".box_con .bottem1 a[rel=next]",
+    "url": ".box_con .bottem1 a[rel=next]:href",
+    "text": "下一页"
+  }
+}
+
+```
 # 2.2.1
 增加替换规则 replace , function
 

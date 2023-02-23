@@ -143,12 +143,38 @@ export default class Request {
      * 文章内容
      */
     async content(item: any): Promise<string> {
-        let rule = this.handler.contentUrl || "{list}{content}";
-        let url = this.buildUrl('before', rule, rule);
-        url = format(url, { list: item.parent.detail || item.parent.url, content: item.url });
-        url = this.buildUrl('after', rule, url);
-        let content = await this.request(url);
-        return this.handler.getContent(content);
+
+        if (this.handler.contentPage) {
+            let list: string[] = [];
+            let rule = this.handler.contentUrl || "{list}{content}";
+            let url = this.buildUrl('before', rule, rule);
+            url = format(url, { list: item.parent.detail || item.parent.url, content: item.url });
+            url = this.buildUrl('after', rule, url);
+            let content = await this.request(url);
+            list.push(this.handler.getContent(content));
+            while (true) {
+                let nextText = this.handler.execParseItem(this.handler.contentCheckNext.content, content);
+                if (nextText.replaceAll('\r\n', '').trim() !== (this.handler.contentCheckNext.text||'下一页')) {
+                    break;
+                }
+                let nextUrl = this.handler.execParseItem(this.handler.contentCheckNext.url, content);
+                let rule = this.handler.contentUrl || "{list}{content}";
+                let url = this.buildUrl('before', rule, rule);
+                url = format(url, { list: item.parent.detail || item.parent.url, content:nextUrl });
+                url = this.buildUrl('after', rule, url);
+                content = await this.request(url);
+                list.push(this.handler.getContent(content));
+            }
+            return list.join("");
+        } else {
+            let rule = this.handler.contentUrl || "{list}{content}";
+            let url = this.buildUrl('before', rule, rule);
+            url = format(url, { list: item.parent.detail || item.parent.url, content: item.url });
+            url = this.buildUrl('after', rule, url);
+            let content = await this.request(url);
+            return this.handler.getContent(content);
+        }
+
     }
 
     /**

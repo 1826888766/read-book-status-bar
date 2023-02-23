@@ -22,6 +22,8 @@ export default class Driver {
     method: string = "GET";
     searchUrlChartSet: string = "utf-8";
     page: boolean = false;
+    contentPage:boolean = false;
+    contentCheckNext:any = "";
     data:any = {};
     /**
      * 网站地址
@@ -96,7 +98,7 @@ export default class Driver {
         let attr = parse.split(":")[1];
         let data;
         if (dom) {
-            if (typeof $.find == "function") {
+            if (typeof $.find === "function") {
                 data = $.find(dom);
             } else {
                 data = $(dom);

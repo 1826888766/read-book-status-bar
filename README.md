@@ -1,14 +1,39 @@
 # read-book-status-bar README
 
-## qq群 755708694 
+## qq 群 755708694
+
 ```json
 // 自定义网站规则
 {
   "name": "笔趣阁", // 网站名称
   "url": "https://www.xbiquge.so", // 网站网址‘
-  "gzip":true, // 应对某些网站开启gzip压缩
-  "contentUrl":"{list}{content}", // 文章url规则
-  "searchUrlChartSet":"gbk", // 网站搜索url编码 // 没有特殊需要不传入
+  "gzip": true, // 应对某些网站开启gzip压缩
+  "contentUrl": "{list}{content}", // 文章url规则
+  "contentPage": true, // 文章页面有翻页时
+  "contentCheckNext": {
+    // 检索是否有下一页
+    "content": ".box_con .bottem1 a[rel=next]", // 下一页dom
+    "url": ".box_con .bottem1 a[rel=next]:href", // 下一页url
+    "text": "下一页" // 相等的值 默认 下一页
+  },
+  "catalogUrl": "{list}", // 普通规则
+  "catalogUrl": {
+    // 替换规则1
+    "before": "{list}",
+    "after": {
+      "type": "replace",
+      "value": ["book", "read"]
+    }
+  },
+  "catalogUrl": {
+    // 替换规则2
+    "before": "{list}",
+    "after": {
+      "type": "function",
+      "value": "return url.replace('book','read')" // 必须要返回url 否则没有搜索内容
+    }
+  },
+  "searchUrlChartSet": "gbk", // 网站搜索url编码 // 没有特殊需要不传入
   "searchUrl": "/modules/article/search.php?searchkey={name}", // 搜索网址 {name}为搜索的内容
   "parseSearch": {
     "list": "#main li", // 搜索的页面，列表搜索，参考jquery
@@ -16,8 +41,8 @@
     "content": ".s2" // 搜索的页面，书籍名称，会自动获取text内容
   },
   "parseCatalog": {
-    "list": "dd a",// 目录的页面，列表搜索，参考jquery
-    "url": ":href",// 目录的页面，书籍地址，参考:href 解析链接
+    "list": "dd a", // 目录的页面，列表搜索，参考jquery
+    "url": ":href", // 目录的页面，书籍地址，参考:href 解析链接
     "content": "" // 目录的页面，书籍名称，会自动获取text内容
   },
   "parseContent": {
@@ -26,11 +51,11 @@
 }
 ```
 
-# 2.0全新升级
+# 2.0 全新升级
 
 - 免费网站自定义,不在受预设平台限制，随意更换
 - 本地文件加载更快，每个书籍都可单独配置自己的断章规则，
-- 如有其他需求，欢迎提交issue
+- 如有其他需求，欢迎提交 issue
 - 两种阅读方式可供选择，`状态栏`，`编辑器内注释`
 
 ## 支持命令
@@ -46,14 +71,12 @@
 - [x] 下一行
 - [x] 老板键
 
-
-
-
 # 1.0
+
 # 状态栏读书
 
-> `ctrl+shift+p` 搜索 `状态栏读书：搜索` or `状态栏读书：目录` 
-> 可在webview中看原始页面
+> `ctrl+shift+p` 搜索 `状态栏读书：搜索` or `状态栏读书：目录`
+> 可在 webview 中看原始页面
 
 ## 支持平台
 
@@ -77,7 +100,8 @@
 
 ## 快捷键
 
-> 上一行  windows `ctrl+alt+w` mac `cmd+alt+w`
+> 上一行 windows `ctrl+alt+w` mac `cmd+alt+w`
 >
-> 下一行  windows `ctrl+alt+s` mac `cmd+alt+s`
+> 下一行 windows `ctrl+alt+s` mac `cmd+alt+s`
+
 # 本插件仅供学习和参考
