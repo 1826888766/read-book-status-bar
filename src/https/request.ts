@@ -93,7 +93,7 @@ export default class Request {
             if (typeof url !== "string") {
                 if (url[action]) {
                     if (typeof url[action] === "string") {
-                        url = params;
+                        url = url[action];
                     } else {
                         if (url[action].type === "function") {
                             eval(`function fun(url){ ${url[action].value} };url = fun("${params}");`);

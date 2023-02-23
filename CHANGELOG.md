@@ -1,3 +1,20 @@
+# 2.2.1
+增加替换规则 replace , function
+
+```json
+{
+  ...,
+  "catalogUrl": {
+    "before": "{list}",
+    "after": {
+      "type": "replace",
+      "value": ["book","read"]
+    }
+  }
+}
+
+```
+
 # 2.1.4
 修复最后一行超出设定的字符数丢失问题
 # 2.1.1
