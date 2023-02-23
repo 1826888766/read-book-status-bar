@@ -21,7 +21,7 @@ export default class Driver {
     gzip: boolean = true;
     method: string = "GET";
     searchUrlChartSet: string = "utf-8";
-    contentUrl: string = "";
+    page: boolean = false;
     data:any = {};
     /**
      * 网站地址
@@ -30,9 +30,10 @@ export default class Driver {
     /**
      * 搜索地址
      */
-    searchUrl: string = "";
+    contentUrl: any = "";
+    searchUrl: any = "";
     cookie: string = "";
-    catalogUrl: string = "";
+    catalogUrl: any = "";
     /**
      * 搜索解析规则
      */
@@ -84,7 +85,7 @@ export default class Driver {
                 content: ""
             };
             item.url = this.execParseItem(parse.url, $(elem));
-            item.content = this.execParseItem(parse.content, $(elem));
+            item.content = this.execParseItem(parse.content, $(elem)).replace("\r\n","").trim();
             list[i] = item;
         });
         return list;

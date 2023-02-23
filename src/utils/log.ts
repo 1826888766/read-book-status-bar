@@ -14,10 +14,9 @@ export default {
     write(type: string, msg: string, ...params: any[]) {
         output.appendLine(`[read-book][${type}] : ${msg} `+JSON.stringify(params));
     },
-
+    
     error(msg: string) {
         this.write('error', msg);
-
     },
     warn(msg: string) {
         this.write('warn', msg);

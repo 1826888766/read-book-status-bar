@@ -2,9 +2,9 @@ import { ReadBook } from "../main";
 import { commands, window, StatusBarAlignment, ThemeIcon, StatusBarItem, QuickPick, QuickPickItem } from "vscode";
 import log from "../utils/log";
 import Request from "../https/request";
-import  domains, { DomainItem } from "../providers/domain";
+import domains, { DomainItem } from "../providers/domain";
 var handler: ReadBook, searchStatusBarItem: StatusBarItem, quickPick: QuickPick<QuickPickItem>;
-var domain:any;
+var domain: any;
 function search() {
     let command = "read-book-status-bar.search";
     searchStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 91);
@@ -24,49 +24,51 @@ function search() {
         tooltip: "下一页",
         iconPath: new ThemeIcon("arrow-right"),
     }];
-    quickPick.onDidTriggerButton((e)=>{
-        log.info(e.tooltip||""); 
+    quickPick.onDidTriggerButton((e) => {
+        log.info(e.tooltip || "");
     });
     quickPick.onDidTriggerItemButton((e) => {
         // 监听按钮
-        log.info("加入书架"+e.item.label);
+        log.info("加入书架" + e.item.label);
         quickPick.hide();
-        commands.executeCommand("read-book-status-bar.list",e.item).then(res=>{
-        });
+        commands.executeCommand("read-book-status-bar.list", e.item);
     });
     let time: NodeJS.Timeout;
     quickPick.onDidChangeValue(e => {
         // 监听输入
         clearTimeout(time);
         time = setTimeout(async () => {
-            let list: any[] =await Request.getInstance(domain).search(e);
+            quickPick.busy = true;
+
+            let list: any[] = await Request.getInstance(domain).search(e);
             // 获取当前网站
             quickPick.items = list.map((item) => {
                 return {
                     label: item.content,
                     detail: item.url,
                     domain,
-                    buttons:[{
-                        iconPath:new ThemeIcon('add'),
-                        tooltip:"加入书架",
+                    buttons: [{
+                        iconPath: new ThemeIcon('add'),
+                        tooltip: "加入书架",
                     }]
                 };
             });
-        }, 300);
+            quickPick.busy = false;
+        }, 500);
     });
 
     commands.registerCommand(command, (e) => {
-        if (e instanceof DomainItem){
+        if (e instanceof DomainItem) {
             domain = e.element;
-        }else{
+        } else {
             domain = domains.getItems()[0];
         }
-        if(domain){
-            quickPick.title = "搜索："+ domain.name;
+        if (domain) {
+            quickPick.title = "搜索：" + domain.name;
             showSearch();
-        }else{
-            window.showInformationMessage('没有网站可供搜索','去添加','取消').then(res=>{
-                if(res == "去添加"){
+        } else {
+            window.showInformationMessage('没有网站可供搜索', '去添加', '取消').then(res => {
+                if (res == "去添加") {
                     commands.executeCommand("read-book-status-bar.domain-add");
                 }
             });

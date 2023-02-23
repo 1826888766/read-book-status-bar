@@ -3,6 +3,8 @@ export default {
     "url": "https://www.xbiquge.so",
     "searchUrlChartSet": "gbk",
     "contentUrl": "{list}{content}",
+    "catalogUrl": "{list}",
+    "page":true,
     "searchUrl": "/modules/article/search.php?searchkey={name}",
     "parseSearch": {
         "list": "#main li",

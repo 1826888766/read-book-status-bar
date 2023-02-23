@@ -51,8 +51,11 @@ export default class Request {
         } else {
             name = encodeURI(name);
         }
-        let url = format(this.handler.searchUrl, { name });
-        let content = await this.request(this.handler.url + url);
+        let rule = this.handler.searchUrl;
+        let url = this.buildUrl('before', rule, rule);
+        url = format(url, { name });
+        url = this.buildUrl('after', rule, url);
+        let content = await this.request(url);
         return this.handler.getSearchList(content);
     }
 
@@ -60,26 +63,90 @@ export default class Request {
      * 书籍目录
      */
     async catalog(item: any): Promise<ParseItem[]> {
-        let url = format(this.handler.catalogUrl || "{list}", { list: item.detail });
-        if (url.startsWith("http://") || url.startsWith("https://")) {
+        if (this.handler.page) {
+            let page = 0;
+            let catalog: ParseItem[] = [];
+            while (true) {
+                page++;
+                let url = this.buildCatalogUrl(item.detail, page);
+                let content = await this.request(url);
+                let list = this.handler.getCatalogList(content);
+                if (list) {
+                    catalog = catalog.concat(list);
+                } else {
+                    break;
+                }
 
+            }
+            return catalog;
         } else {
-            url = this.handler.url + url;
+            let url = this.buildCatalogUrl(item.detail, 1);
+            let content = await this.request(url);
+            return this.handler.getCatalogList(content);
         }
-        let content = await this.request(url);
-        return this.handler.getCatalogList(content);
     }
+
+    buildUrl(action: any, url: any, params: any) {
+
+        if (action === "after") {
+
+            if (typeof url !== "string") {
+                if (url[action]) {
+                    if (typeof url[action] === "string") {
+                        url = params;
+                    } else {
+                        if (url[action].type === "function") {
+                            eval(`function fun(url){ ${url[action].value} };url = fun("${params}");`);
+                        } else if (url[action].type === "replace") {
+                            url = params.replace(url[action].value[0], url[action].value[1]);
+                        } else {
+                            url = params;
+                        }
+                    }
+                }
+            } else {
+                url = params;
+            }
+
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+
+            } else {
+                url = this.handler.url + url;
+            }
+        } else {
+            if (typeof url !== "string") {
+                if (url[action]) {
+                    if (typeof url[action] === "string") {
+                        url = url[action];
+                    } else {
+                        if (url[action].type === "function") {
+                            eval(`function fun(url){ return ${url[action].value} };url = fun("${params}");`);
+                        }
+                    }
+                }
+            }
+        }
+
+        return url;
+    }
+
+    buildCatalogUrl(list: string, page: number) {
+        let defaultValue = !this.handler.page ? '{list}' : "{list}?page={page}";
+        let rule = this.handler.catalogUrl || defaultValue;
+        let url = this.buildUrl('before', rule, rule);
+        url = format(url, { list, page });
+        return this.buildUrl('after', rule, url);
+    }
+
+
     /**
      * 文章内容
      */
     async content(item: any): Promise<string> {
-
-        let url = format(this.handler.contentUrl || "{list}{content}", { list: item.parent.detail || item.parent.url, content: item.url });
-        if (url.startsWith("http://") || url.startsWith("https://")) {
-
-        } else {
-            url = this.handler.url + url;
-        }
+        let rule = this.handler.contentUrl || "{list}{content}";
+        let url = this.buildUrl('before', rule, rule);
+        url = format(url, { list: item.parent.detail || item.parent.url, content: item.url });
+        url = this.buildUrl('after', rule, url);
         let content = await this.request(url);
         return this.handler.getContent(content);
     }
@@ -95,13 +162,13 @@ export default class Request {
             log.info('request 请求：' + url);
             c.queue([{
                 uri: url,
-                followAllRedirects:true,
+                followAllRedirects: true,
                 methods: this.handler.method || "GET",
                 gzip: this.handler.gzip,
-                referer:this.handler.url,
+                referer: this.handler.url,
                 // The global callback won't be called
                 callback: function (error: any, res: any, done: Function) {
-                if (error) {
+                    if (error) {
                         log.info(error);
                     } else {
                         var $ = res.$;

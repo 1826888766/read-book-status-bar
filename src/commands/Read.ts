@@ -198,20 +198,24 @@ function formatContents() {
     let rowLength: number = config.get('rowLength') || 40;
     let pre = "";
     loadContents.forEach(element => {
-        element = pre + element;
+        element = (pre + element).replaceAll('\r\n', '').trim();
         while (true) {
             if (element) {
                 if (element.length > rowLength) {
-                    let line = element.slice(0, rowLength);
-                    pre = element.slice(rowLength, element.length);
-                    newContents.push(line.trim());
+                    let line = element.slice(0, rowLength).trim();
+                    pre = element.slice(rowLength, element.length).trim();
+                    if (line) {
+                        newContents.push(line);
+                    }
                     if (pre.length >= rowLength) {
                         element = pre;
                     } else {
                         break;
                     }
                 } else {
-                    newContents.push(element.trim());
+                    if (!element.trim()) {
+                        newContents.push(element.trim());
+                    }
                     pre = "";
                     break;
                 }
@@ -220,8 +224,8 @@ function formatContents() {
             }
         }
     });
-    if(pre){
-        newContents.push(pre);
+    if (pre.trim()) {
+        newContents.push(pre.trim());
     }
     showContents = newContents;
 }
@@ -267,52 +271,48 @@ function list() {
     log.info("注册列表命令");
     commands.registerCommand(command, async (e) => {
         // console.log(e);
-        try {
 
-            log.info("列表命令激活 " + JSON.stringify(e));
-            statusview.write('$(loading~spin) 正在加载书籍《' + (e.title || e.label) + '》...');
-            if (e.type === "file") {
-                await _import.loadFile(e.url, e.rule);
-            } else {
-                let list: any[] = storage.getStorage('nav_' + (e.title || e.label));
-                if (!list) {
-                    list = await Request.getInstance(e.domain || domain).catalog(e);
-                }
-                // 获取当前网站
-                let books: any[] = storage.getStorage("books") || [];
-
-                if (books.map(item => item.url).indexOf(e.url || e.detail) === -1) {
-                    log.info("书架不存在,开始加入书架");
-                    let bookItem = {
-                        title: (e.title || e.label),
-                        url: (e.detail || e.url),
-                        type: (e.domain || domain).name,
-                        domain: (e.domain || domain)
-                    };
-                    books.push(bookItem);
-                    book.setItems(books);
-                    storage.setStorage('books', books);
-                    storage.setStorage('nav_' + (e.title || e.label), list);
-                    log.info("书架不存在,加入书架成功");
-                    storage.setStorage('select-book', bookItem);
-
-                }
-
-                content.setItems(list.map((item) => {
-                    return {
-                        title: (item.title || item.content),
-                        url: item.url,
-                        parent: e
-                    };
-                }));
-
-                statusview.write('$(check) 目录加载成功《' + (e.title || e.label) + '》');
+        log.info("列表命令激活 " + JSON.stringify(e));
+        statusview.write('$(loading~spin) 正在加载书籍《' + (e.title || e.label) + '》...');
+        if (e.type === "file") {
+            await _import.loadFile(e.url, e.rule);
+        } else {
+            let list: any[] = storage.getStorage('nav_' + (e.title || e.label));
+            if (!list) {
+                list = await Request.getInstance(e.domain || domain).catalog(e);
             }
-            auto();
+            // 获取当前网站
+            let books: any[] = storage.getStorage("books") || [];
+
+            if (books.map(item => item.url).indexOf(e.url || e.detail) === -1) {
+                log.info("书架不存在,开始加入书架");
+                let bookItem = {
+                    title: (e.title || e.label),
+                    url: (e.detail || e.url),
+                    type: (e.domain || domain).name,
+                    domain: (e.domain || domain)
+                };
+                books.push(bookItem);
+                book.setItems(books);
+                storage.setStorage('books', books);
+                storage.setStorage('nav_' + (e.title || e.label), list);
+                log.info("书架不存在,加入书架成功");
+                storage.setStorage('select-book', bookItem);
+
+            }
+
+            content.setItems(list.map((item) => {
+                return {
+                    title: (item.title || item.content),
+                    url: item.url,
+                    parent: e
+                };
+            }));
+
+            statusview.write('$(check) 目录加载成功《' + (e.title || e.label) + '》');
         }
-        catch (e) {
-            log.error(JSON.stringify(e));
-        }
+        auto();
+
     });
 }
 
