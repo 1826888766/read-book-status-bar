@@ -213,7 +213,7 @@ function formatContents() {
                         break;
                     }
                 } else {
-                    if (!element.trim()) {
+                    if (element.trim()) {
                         newContents.push(element.trim());
                     }
                     pre = "";
@@ -254,7 +254,7 @@ function run() {
     }
     let config = workspace.getConfiguration("read-book-status-bar");
     let output = format(config.get("format") || "{content}", {
-        content: showContents[contentIndex],
+        content: showContents[contentIndex - 1],
         progress: progress
     });
     view.write(output);
